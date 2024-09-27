@@ -1,5 +1,5 @@
-DROP DATABASE IF EXISTS street_art_collector_test;
-DROP DATABASE IF EXISTS street_art_collector;
+DROP DATABASE IF EXISTS mural_map_test;
+DROP DATABASE IF EXISTS mural_map;
 
-CREATE DATABASE street_art_collector_test;
-CREATE DATABASE street_art_collector;
+CREATE DATABASE mural_map_test;
+CREATE DATABASE mural_map;
