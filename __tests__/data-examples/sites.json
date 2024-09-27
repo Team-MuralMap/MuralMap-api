@@ -1,0 +1,18 @@
+{
+    "body": {
+        "sites": [
+            {
+                "site_id": 1,
+                "latitude": 0,
+                "longitude": 0,
+                "author": "God"
+            },
+            {
+                "site_id": 2,
+                "latitude": 1000,
+                "longitude": 1000,
+                "author": "Someone"
+            }
+        ]
+    }
+}

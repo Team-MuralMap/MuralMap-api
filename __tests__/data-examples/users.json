@@ -1,0 +1,16 @@
+{
+    "body": {
+        "users": [
+            {
+                "user_id": 1,
+                "username": "patterbear",
+                "avatar_url": "https://raw.githubusercontent.com/Patterbear/my-portfolio/refs/heads/main/assets/icon.png"
+            },
+            {
+                "user_id": 2,
+                "username": "muralmapper",
+                "avatar_url": "https://avatars.githubusercontent.com/u/183091053?s=200&v=4"
+            }
+        ]
+    }
+}
