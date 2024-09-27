@@ -1,7 +1,14 @@
 const format = require("pg-format");
 const db = require("../connection");
 
-const seed = ({ userData, postData, commentData, postLikeData }) => {
+const seed = ({
+  userData,
+  postData,
+  commentData,
+  postLikeData,
+  commentLikeData,
+  visitsData,
+}) => {
   return db
     .query(`DROP TABLE IF EXISTS commentsLikes;`)
     .then(() => db.query(`DROP TABLE IF EXISTS postLikes;`))
@@ -143,14 +150,14 @@ const seed = ({ userData, postData, commentData, postLikeData }) => {
       const insertCommentLikesQuery = format(
         `INSERT INTO commentLikes (user_id, comment_id)
         VALUES %L`,
-        postLikeData.map(({ user_id, comment_id }) => [user_id, comment_id])
+        commentLikeData.map(({ user_id, comment_id }) => [user_id, comment_id])
       );
       db.query(insertLikesQuery);
 
       const insertVisitsQuery = format(
         `INSERT INTO visits (user_id, post_id)
         VALUES %L`,
-        postLikeData.map(({ user_id, post_id }) => [user_id, post_id])
+        visitsData.map(({ user_id, post_id }) => [user_id, post_id])
       );
       db.query(insertLikesQuery);
     });
