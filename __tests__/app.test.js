@@ -522,7 +522,7 @@ describe("POST /api/posts/:post_id/comments", () => {
     };
 
     return request(app)
-      .post("/api/comments")
+      .post("/api/posts/1/comments")
       .send(newComment)
       .set("Accept", "application/json")
       .expect(201)
@@ -547,13 +547,29 @@ describe("POST /api/posts/:post_id/comments", () => {
       });
   });
 
+  test("returns 404 error message if given ID does not exist", () => {
+    const newComment = {
+        author: "patterbear",
+        body: "test comment",
+    };
+
+    return request(app)
+      .post("/api/posts/132456789056/comments")
+      .send(newComment)
+      .set("Accept", "application/json")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+
   test("returns 400 error message if request body has missing fields", () => {
     const newComment = {
       body: "where are all the other fields???",
     };
 
     return request(app)
-      .post("/api/comments")
+      .post("/api/posts/1/comments")
       .send(newComment)
       .set("Accept", "application/json")
       .expect(400)
