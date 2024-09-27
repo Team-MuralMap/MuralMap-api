@@ -1,16 +1,18 @@
 const format = require("pg-format");
 const db = require("../connection");
+const { convertTimestampToDate } = require("./utils");
 
 const seed = ({
   userData,
   postData,
   commentData,
+  siteData = [{ author_id: 1, post_id: 1, latitude: 0, longitude: 0 }],
   postLikeData,
   commentLikeData,
   visitsData,
 }) => {
   return db
-    .query(`DROP TABLE IF EXISTS commentsLikes;`)
+    .query(`DROP TABLE IF EXISTS commentLikes;`)
     .then(() => db.query(`DROP TABLE IF EXISTS postLikes;`))
     .then(() => db.query(`DROP TABLE IF EXISTS visits;`))
     .then(() => db.query(`DROP TABLE IF EXISTS comments;`))
@@ -21,7 +23,7 @@ const seed = ({
     .then(() =>
       db.query(`
         CREATE TABLE users (
-          user_id INT SERIAL PRIMARY KEY,
+          user_id SERIAL PRIMARY KEY,
           username VARCHAR NOT NULL,
           name VARCHAR NOT NULL,
           avatar_url VARCHAR NOT NULL DEFAULT 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
@@ -33,9 +35,9 @@ const seed = ({
         CREATE TABLE sites (
           site_id SERIAL PRIMARY KEY,
           author_id INT NOT NULL REFERENCES users (user_id),
-          latitude DOUBLE NOT NULL,
-          longitude DOUBLE NOT NULL,
-          );`)
+          latitude NUMERIC NOT NULL,
+          longitude NUMERIC NOT NULL
+        );`)
       //   created_at TIMESTAMP DEFAULT NOW()
     )
     .then(() =>
@@ -43,8 +45,8 @@ const seed = ({
         CREATE TABLE posts (
           post_id SERIAL PRIMARY KEY,
           author_id INT NOT NULL REFERENCES users (user_id),
-          latitude DOUBLE NOT NULL,
-          longitude DOUBLE NOT NULL,
+          latitude NUMERIC NOT NULL,
+          longitude NUMERIC NOT NULL,
           body VARCHAR,
           created_at TIMESTAMP DEFAULT NOW()
         );`)
@@ -110,24 +112,28 @@ const seed = ({
       return db.query(insertSitesQuery);
     })
     .then(() => {
+      const formattedPostData = postData.map(convertTimestampToDate);
       const insertPostsQuery = format(
         `INSERT INTO posts (author_id, latitude, longitude, body, created_at)
-        VALUES %L`,
-        postData.map(({ author_id, latitude, longitude, body, created_at }) => [
-          author_id,
-          latitude,
-          longitude,
-          body,
-          created_at,
-        ])
+      VALUES %L;`,
+        formattedPostData.map(
+          ({ author_id, latitude, longitude, body, created_at }) => [
+            author_id,
+            latitude,
+            longitude,
+            body,
+            created_at,
+          ]
+        )
       );
       return db.query(insertPostsQuery);
     })
     .then(() => {
+      const formattedCommentData = commentData.map(convertTimestampToDate);
       const insertCommentQuery = format(
-        `INSERT INTO comment (body, post_id, author_id, created_at, reply_to)
-        VALUES $L`,
-        commentData.map(
+        `INSERT INTO comments (body, post_id, author_id, created_at, reply_to)
+      VALUES %L;`,
+        formattedCommentData.map(
           ({ body, post_id, author_id, created_at, reply_to }) => [
             body,
             post_id,
@@ -139,24 +145,25 @@ const seed = ({
       );
       return db.query(insertCommentQuery);
     })
+
     .then(() => {
       const insertLikesQuery = format(
         `INSERT INTO postLikes (user_id, post_id)
-        VALUES %L`,
+      VALUES %L;`,
         postLikeData.map(({ user_id, post_id }) => [user_id, post_id])
       );
       db.query(insertLikesQuery);
 
       const insertCommentLikesQuery = format(
         `INSERT INTO commentLikes (user_id, comment_id)
-        VALUES %L`,
+      VALUES %L;`,
         commentLikeData.map(({ user_id, comment_id }) => [user_id, comment_id])
       );
       db.query(insertLikesQuery);
 
       const insertVisitsQuery = format(
         `INSERT INTO visits (user_id, post_id)
-        VALUES %L`,
+      VALUES %L;`,
         visitsData.map(({ user_id, post_id }) => [user_id, post_id])
       );
       db.query(insertLikesQuery);
