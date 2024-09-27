@@ -1,11 +1,11 @@
 const format = require("pg-format");
 const db = require("../connection");
 
-const seed = ({ data }) => {
+const seed = ({ userData, postData, commentData, postLikeData }) => {
   return db
     .query(`DROP TABLE IF EXISTS commentsLikes;`)
     .then(() => db.query(`DROP TABLE IF EXISTS postLikes;`))
-    .then(() => db.query(`DROP TABLE IF EXISTS visitsJunction;`))
+    .then(() => db.query(`DROP TABLE IF EXISTS visits;`))
     .then(() => db.query(`DROP TABLE IF EXISTS comments;`))
     .then(() => db.query(`DROP TABLE IF EXISTS posts;`))
     .then(() => db.query(`DROP TABLE IF EXISTS sites;`))
@@ -20,15 +20,16 @@ const seed = ({ data }) => {
           avatar_url VARCHAR NOT NULL DEFAULT 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
         );`)
     )
-    .then(() =>
-      db.query(`
+    .then(
+      () =>
+        db.query(`
         CREATE TABLE sites (
           site_id SERIAL PRIMARY KEY,
           author_id INT NOT NULL REFERENCES users (user_id),
           latitude DOUBLE NOT NULL,
           longitude DOUBLE NOT NULL,
-          created_at TIMESTAMP DEFAULT NOW()
-        );`)
+          );`)
+      //   created_at TIMESTAMP DEFAULT NOW()
     )
     .then(() =>
       db.query(`
@@ -59,30 +60,100 @@ const seed = ({ data }) => {
           post_id INT REFERENCES posts (post_id),
           user_id INT REFERENCES users (user_id)
         );`);
-      const visitsJunctionTablePromise = db.query(`
-        CREATE TABLE postLikes (
+      const visitsTablePromise = db.query(`
+        CREATE TABLE visits (
           visit_id SERIAL PRIMARY KEY,
           post_id INT REFERENCES posts (post_id),
           user_id INT REFERENCES users (user_id)
         );`);
       const commentLikesTablePromise = db.query(`
-        CREATE TABLE postLikes (
-          like_id SERIAL PRIMARY KEY,
+        CREATE TABLE commentLikes (
+          comment_like_id SERIAL PRIMARY KEY,
           comment_id INT REFERENCES comments (comment_id),
           user_id INT REFERENCES users (user_id)
         );`);
       return Promise.all([
         postLikesTablePromise,
-        visitsJunctionTablePromise,
+        visitsTablePromise,
         commentLikesTablePromise,
       ]);
-    });
+    })
 
-  // .then(() => {
-  //   const insertUsersQuery = format(
-  //     "INSERT INTO users (username, name, avatar_url)"
-  //   );
-  // });
+    .then(() => {
+      const insertUsersQuery = format(
+        "INSERT INTO users (username, name, avatar_url) VALUES %L;",
+        userData.map(({ username, name, avatar_url }) => [
+          username,
+          name,
+          avatar_url,
+        ])
+      );
+      return db.query(insertUsersQuery);
+    })
+    .then(() => {
+      const insertSitesQuery = format(
+        `INSERT INTO sites (author_id, latitude, longitude)
+        VALUES %L;`,
+        siteData.map(({ author_id, latitude, longitude }) => [
+          author_id,
+          latitude,
+          longitude,
+        ])
+      );
+      return db.query(insertSitesQuery);
+    })
+    .then(() => {
+      const insertPostsQuery = format(
+        `INSERT INTO posts (author_id, latitude, longitude, body, created_at)
+        VALUES %L`,
+        postData.map(({ author_id, latitude, longitude, body, created_at }) => [
+          author_id,
+          latitude,
+          longitude,
+          body,
+          created_at,
+        ])
+      );
+      return db.query(insertPostsQuery);
+    })
+    .then(() => {
+      const insertCommentQuery = format(
+        `INSERT INTO comment (body, post_id, author_id, created_at, reply_to)
+        VALUES $L`,
+        commentData.map(
+          ({ body, post_id, author_id, created_at, reply_to }) => [
+            body,
+            post_id,
+            author_id,
+            created_at,
+            reply_to,
+          ]
+        )
+      );
+      return db.query(insertCommentQuery);
+    })
+    .then(() => {
+      const insertLikesQuery = format(
+        `INSERT INTO postLikes (user_id, post_id)
+        VALUES %L`,
+        postLikeData.map(({ user_id, post_id }) => [user_id, post_id])
+      );
+      db.query(insertLikesQuery);
+
+      const insertCommentLikesQuery = format(
+        `INSERT INTO commentLikes (user_id, comment_id)
+        VALUES %L`,
+        postLikeData.map(({ user_id, comment_id }) => [user_id, comment_id])
+      );
+      db.query(insertLikesQuery);
+
+      const insertVisitsQuery = format(
+        `INSERT INTO visits (user_id, post_id)
+        VALUES %L`,
+        postLikeData.map(({ user_id, post_id }) => [user_id, post_id])
+      );
+      db.query(insertLikesQuery);
+    });
 };
 
 module.exports = seed;
