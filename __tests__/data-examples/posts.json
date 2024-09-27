@@ -4,6 +4,7 @@
             {
                 "post_id": 1,
                 "author": "patterbear",
+                "img_url": "https://picsum.photos/300",
                 "latitude": 0,
                 "longitude": 0,
                 "body": "this is the centre of the earth",
@@ -13,6 +14,7 @@
             {
                 "post_id": 2,
                 "author": "muralmapper",
+                "img_url": "https://picsum.photos/300",
                 "latitude": 0,
                 "longitude": 0,
                 "body": "this is also the centre of the earth",
@@ -22,6 +24,7 @@
             {
                 "post_id": 3,
                 "author": "patterbear",
+                "img_url": "https://picsum.photos/300",
                 "latitude": 10000,
                 "longitude": 10000,
                 "body": "I have no idea what's here",

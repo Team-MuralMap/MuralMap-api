@@ -5,13 +5,13 @@
                 "site_id": 1,
                 "latitude": 0,
                 "longitude": 0,
-                "author": "God"
+                "author_id": 1
             },
             {
                 "site_id": 2,
                 "latitude": 1000,
                 "longitude": 1000,
-                "author": "Someone"
+                "author_id": 2
             }
         ]
     }
