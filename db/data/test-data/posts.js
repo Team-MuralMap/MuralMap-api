@@ -1,0 +1,68 @@
+module.exports = [
+  {
+    img_url:
+      "https://upload.wikimedia.org/wikipedia/commons/9/91/Pierre_Brossolette_-_C215_%28cropped%29.jpg",
+    author_id: 1,
+    post_id: 1,
+    created_at: 1605107340000,
+    longitude: 21.163367,
+    latitude: 43.961623,
+    body: "here is a nice",
+    site_id: 1,
+  },
+  {
+    img_url:
+      "https://parcoursstreetart.brussels/wp-content/uploads/2024/06/IMG_0832-scaled.jpg",
+    author_id: 1,
+    post_id: 2,
+    created_at: 1605107340000,
+    longitude: 4.670483,
+    latitude: 51.183432,
+    body: "yellow",
+    site_id: 1,
+  },
+  {
+    img_url:
+      "https://media.cnn.com/api/v1/images/stellar/prod/190703180856-01-berlin-wall-eastside-gallery-restricted.jpg?q=w_2000,c_fill/f_webp",
+    author_id: 1,
+    post_id: 3,
+    created_at: 1704968831494,
+    longitude: 13.441759,
+    latitude: 52.504228,
+    body: "Berlin vibes",
+    site_id: 1,
+  },
+  {
+    img_url:
+      "https://i0.wp.com/inspiringcity.com/wp-content/uploads/2018/08/IMG_20180817_162224.jpg?w=2560&ssl=1",
+    author_id: 1,
+    post_id: 4,
+    created_at: 1704968831494,
+    longitude: -0.166811,
+    latitude: 50.845395,
+    body: "got lost",
+    site_id: 1,
+  },
+  {
+    img_url:
+      "https://intellectual-property-helpdesk.ec.europa.eu/sites/default/files/styles/oe_theme_medium_2x_no_crop/public/2020-12/download%20%281%29_1.png?itok=Gh5TJvvm",
+    author_id: 3,
+    post_id: 5,
+    created_at: 1704968831494,
+    longitude: 2.207651,
+    latitude: 41.411824,
+    body: "Spain",
+    site_id: 1,
+  },
+  {
+    img_url:
+      "https://intellectual-property-helpdesk.ec.europa.eu/sites/default/files/styles/oe_theme_medium_2x_no_crop/public/2020-12/download_1.png?itok=VKUsnMCC",
+    author_id: 3,
+    post_id: 6,
+    created_at: 1704968831494,
+    longitude: -43.185828,
+    latitude: -22.910664,
+    body: "Rio",
+    site_id: 1,
+  },
+];
