@@ -26,8 +26,7 @@ const seed = ({
           user_id SERIAL PRIMARY KEY,
           username VARCHAR NOT NULL,
           email VARCHAR NOT NULL,
-          first_name VARCHAR NOT NULL,
-          surname VARCHAR NOT NULL,
+          name VARCHAR NOT NULL,
           avatar_url VARCHAR NOT NULL DEFAULT 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
         );`)
     )
@@ -92,12 +91,11 @@ const seed = ({
 
     .then(() => {
       const insertUsersQuery = format(
-        "INSERT INTO users (username, email, first_name, surname, avatar_url) VALUES %L;",
-        userData.map(({ username, email, first_name, surname, avatar_url }) => [
+        "INSERT INTO users (username, email, name, avatar_url) VALUES %L;",
+        userData.map(({ username, email, name, avatar_url }) => [
           username,
           email,
-          first_name,
-          surname,
+          name,
           avatar_url,
         ])
       );
