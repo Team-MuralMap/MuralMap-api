@@ -1,0 +1,30 @@
+{
+    "body": {
+        "comments": [
+            {
+                "comment_id": 1,
+                "author": "muralmapper",
+                "post_id": 1,
+                "body": "did you take this on a potato?",
+                "created_at": "2024-09-27T14:52:00.000Z",
+                "reply_to": null
+            },
+            {
+                "comment_id": 2,
+                "author": "patterbear",
+                "post_id": 1,
+                "body": "what do you think?",
+                "created_at": "2024-09-27T14:53:00.000Z",
+                "reply_to": 1
+            },
+            {
+                "comment_id": 3,
+                "author": "patterbear",
+                "post_id": 3,
+                "body": "abysmal photography",
+                "created_at": "2024-09-27T14:54:00.000Z",
+                "reply_to": null
+            }
+        ]
+    }
+}
