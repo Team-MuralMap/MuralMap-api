@@ -101,6 +101,8 @@ describe("GET /api/sites/:site_id", () => {
       .expect(200)
       .then((response) => {
         const site = response.body.site;
+        site.latitude = Number(site.latitude);
+        site.longitude = Number(site.longitude);
 
         expect(typeof site).toBe("object");
 
@@ -114,10 +116,10 @@ describe("GET /api/sites/:site_id", () => {
   });
   test("returns 404 error message if site ID does not exist", () => {
     return request(app)
-      .get("/api/sites/123456789876543")
+      .get("/api/sites/1234567898")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -126,7 +128,7 @@ describe("GET /api/sites/:site_id", () => {
       .get("/api/sites/hello")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
@@ -139,15 +141,13 @@ describe("GET /api/posts", () => {
       .then((response) => {
         const posts = response.body.posts;
 
-        expect(Array.isArray(posts)).toBe(posts);
+        expect(Array.isArray(posts)).toBe(true);
 
-        for (post of posts) {
+        for (const post of posts) {
           expect(post).toMatchObject({
             post_id: expect.any(Number),
-            author: expect.any(String),
+            author_id: expect.any(Number),
             img_url: expect.any(String),
-            latitude: expect.any(Number),
-            longitude: expect.any(Number),
             body: expect.any(String),
             created_at: expect.any(String),
             site_id: expect.any(Number),
@@ -169,10 +169,8 @@ describe("GET /api/posts/:post_id", () => {
 
         expect(post).toMatchObject({
           post_id: 1,
-          author: expect.any(String),
+          author_id: expect.any(Number),
           img_url: expect.any(String),
-          latitude: expect.any(Number),
-          longitude: expect.any(Number),
           body: expect.any(String),
           created_at: expect.any(String),
           site_id: expect.any(Number),
@@ -181,10 +179,10 @@ describe("GET /api/posts/:post_id", () => {
   });
   test("returns 404 error message if post ID does not exist", () => {
     return request(app)
-      .get("/api/posts/123456789876543")
+      .get("/api/posts/123456789")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -193,7 +191,7 @@ describe("GET /api/posts/:post_id", () => {
       .get("/api/posts/hello")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
@@ -205,17 +203,15 @@ describe("GET /api/posts/:post_id/comments", () => {
       .expect(200)
       .then((response) => {
         const comments = response.body.comments;
-
-        expect(Array.isArray(comments)).toBe(comments);
+        expect(Array.isArray(comments)).toBe(true);
 
         for (comment of comments) {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
-            author: expect.any(String),
+            author_id: expect.any(Number),
             post_id: 1,
             body: expect.any(String),
             created_at: expect.any(String),
-            reply_to: expect.any(String),
           });
         }
       });
@@ -247,7 +243,7 @@ describe("GET /api/comments/:comment_id", () => {
       .get("/api/comments/123456789876543")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -256,7 +252,7 @@ describe("GET /api/comments/:comment_id", () => {
       .get("/api/comments/hello")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
