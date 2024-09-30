@@ -1,6 +1,13 @@
 const app = require("../app");
 const request = require("supertest");
 
+const data = require("../db/data/test-data/index");
+const seed = require("../db/seeds/seed");
+const db = require("../db/connection");
+
+beforeEach(() => seed(data));
+afterAll(() => db.end());
+
 describe("GET /api/users", () => {
   test("returns array of user objects with correct properties", () => {
     return request(app)
@@ -9,9 +16,9 @@ describe("GET /api/users", () => {
       .then((response) => {
         const users = response.body.users;
 
-        expect(Array.isArray(users)).toBe(users);
+        expect(Array.isArray(users)).toBe(true);
 
-        for (user of users) {
+        for (const user of users) {
           expect(user).toMatchObject({
             user_id: expect.any(Number),
             username: expect.any(String),
