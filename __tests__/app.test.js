@@ -213,7 +213,7 @@ describe("GET /api/posts/:post_id/comments", () => {
             post_id: 1,
             body: expect.any(String),
             created_at: expect.any(String),
-            reply_to: expect.any(String),
+            reply_to: expect.toBeOneOf([expect.any(Number), null])
           });
         }
       });
@@ -236,7 +236,7 @@ describe("GET /api/comments/:comment_id", () => {
           post_id: expect.any(Number),
           body: expect.any(String),
           created_at: expect.any(String),
-          reply_to: expect.any(String),
+          reply_to: expect.toBeOneOf([expect.any(Number), null])
         });
       });
   });
@@ -743,5 +743,131 @@ describe("DELETE /api/comments/:comment_id", () => {
       .then((response) => {
         expect(response.body.msg).toBe("bad request");
       });
+  });
+});
+
+describe("PATCH /api/posts/:post_id", () => {
+  test("responds with updated post", () => {
+    const postUpdate = { body: "This is an updated body." };
+
+    return request(app)
+    .patch("/api/posts/1")
+    .send(postUpdate)
+    .expect(200)
+    .then((response) => {
+      const responsePost = response.body.post;
+
+      expect(typeof responsePost).toBe("object");
+
+      expect(responsePost).toEqual({
+        post_id: 1,
+        author: expect.any(Number),
+        img_url: expect.any(String),
+        body: "This is an updated body.",
+        created_at: expect.any(String),
+        site_id: expect.any(Number)
+      });
+    });
+  });
+
+  test("post has its body property updated", () => {
+    const postUpdate = { body: "This is an updated body." };
+
+    return request(app)
+    .patch("/api/posts/1")
+    .send(postUpdate)
+    .expect(200)
+    .then((response) => {
+      const responsePost = response.body.post;
+
+      expect(responsePost.body).toBe("This is an updated body.");
+    });
+  });
+
+test('returns 404 error message if given correctly formatted post ID that does not exist', () => {
+    const postUpdate = { body: "This is an updated body." };
+
+    return request(app)
+    .patch('/api/posts/1322334432')
+    .send(postUpdate)
+    .expect(404)
+    .then((response) => {
+        expect(response.body.msg).toBe('not found');
+    });
+});
+
+test('returns 400 error message if given post ID has invalid format', () => {
+    const postUpdate = { body: "This is an updated body." };
+
+    return request(app)
+    .patch('/api/posts/hello')
+    .send(postUpdate)
+    .expect(400)
+    .then((response) => {
+        expect(response.body.msg).toBe('bad request');
+    });
+  });
+});
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("responds with updated comment", () => {
+    const commentUpdate = { body: "This is an updated body." };
+
+    return request(app)
+    .patch("/api/comments/1")
+    .send(commentUpdate)
+    .expect(200)
+    .then((response) => {
+      const responsecomment = response.body.comment;
+
+      expect(typeof responseComment).toBe("object");
+
+      expect(responseComment).toEqual({
+        comment_id: 1,
+        author: expect.any(Number),
+        post_id: expect.any(Number),
+        body: "This is an updated body.",
+        created_at: expect.any(String),
+        reply_to: expect.toBeOneOf([expect.any(Number), null])
+      });
+    });
+  });
+
+  test("comment has its body property updated", () => {
+    const commentUpdate = { body: "This is an updated body." };
+
+    return request(app)
+    .patch("/api/comments/1")
+    .send(commentUpdate)
+    .expect(200)
+    .then((response) => {
+      const responseComment = response.body.comment;
+
+      expect(responseComment.body).toBe("This is an updated body.");
+    });
+  });
+
+test('returns 404 error message if given correctly formatted comment ID that does not exist', () => {
+    const commentUpdate = { body: "This is an updated body." };
+
+    return request(app)
+    .patch('/api/comments/1322334432')
+    .send(commentUpdate)
+    .expect(404)
+    .then((response) => {
+        expect(response.body.msg).toBe('not found');
+    });
+});
+
+test('returns 400 error message if given comment ID has invalid format', () => {
+    const commentUpdate = { body: "This is an updated body." };
+
+    return request(app)
+    .patch('/api/comments/hello')
+    .send(commentUpdate)
+    .expect(400)
+    .then((response) => {
+        expect(response.body.msg).toBe('bad request');
+    });
   });
 });
