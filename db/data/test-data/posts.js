@@ -5,8 +5,6 @@ module.exports = [
     author_id: 1,
     post_id: 1,
     created_at: 1605107340000,
-    longitude: 21.163367,
-    latitude: 43.961623,
     body: "here is a nice",
     site_id: 1,
   },
@@ -16,10 +14,8 @@ module.exports = [
     author_id: 1,
     post_id: 2,
     created_at: 1605107340000,
-    longitude: 4.670483,
-    latitude: 51.183432,
     body: "yellow",
-    site_id: 1,
+    site_id: 2,
   },
   {
     img_url:
@@ -27,10 +23,8 @@ module.exports = [
     author_id: 1,
     post_id: 3,
     created_at: 1704968831494,
-    longitude: 13.441759,
-    latitude: 52.504228,
     body: "Berlin vibes",
-    site_id: 1,
+    site_id: 3,
   },
   {
     img_url:
@@ -38,10 +32,8 @@ module.exports = [
     author_id: 1,
     post_id: 4,
     created_at: 1704968831494,
-    longitude: -0.166811,
-    latitude: 50.845395,
     body: "got lost",
-    site_id: 1,
+    site_id: 4,
   },
   {
     img_url:
@@ -49,10 +41,8 @@ module.exports = [
     author_id: 3,
     post_id: 5,
     created_at: 1704968831494,
-    longitude: 2.207651,
-    latitude: 41.411824,
     body: "Spain",
-    site_id: 1,
+    site_id: 5,
   },
   {
     img_url:
@@ -60,9 +50,7 @@ module.exports = [
     author_id: 3,
     post_id: 6,
     created_at: 1704968831494,
-    longitude: -43.185828,
-    latitude: -22.910664,
     body: "Rio",
-    site_id: 1,
+    site_id: 6,
   },
 ];

@@ -1,4 +1,6 @@
-const { convertTimestampToDate } = require("../db/seeds/utils");
+const matchers = require("jest-extended");
+expect.extend(matchers);
+const { convertTimestampToDate, checkIfNum } = require("../db/utils/utils");
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -33,5 +35,20 @@ describe("convertTimestampToDate", () => {
     const result = convertTimestampToDate(input);
     const expected = { key: "value" };
     expect(result).toEqual(expected);
+  });
+});
+
+describe("checkIfNum", () => {
+  test("fails when provided a letter", () => {
+    expect(checkIfNum("a")).toBe(false);
+  });
+  test("fails when provided too high of a number", () => {
+    expect(checkIfNum(2147483648)).toBe(false);
+  });
+  test("fails when provided a negative number", () => {
+    expect(checkIfNum(-28)).toBe(false);
+  });
+  test("passes when provided a number within INT limits", () => {
+    expect(checkIfNum(4828)).toBe(true);
   });
 });

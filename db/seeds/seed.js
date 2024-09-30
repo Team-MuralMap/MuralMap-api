@@ -1,12 +1,12 @@
 const format = require("pg-format");
 const db = require("../connection");
-const { convertTimestampToDate } = require("./utils");
+const { convertTimestampToDate } = require("../utils/utils");
 
 const seed = ({
   userData,
   postData,
   commentData,
-  siteData = [{ author_id: 1, post_id: 1, latitude: 0, longitude: 0 }],
+  siteData,
   postLikeData,
   commentLikeData,
   visitsData,
@@ -25,6 +25,7 @@ const seed = ({
         CREATE TABLE users (
           user_id SERIAL PRIMARY KEY,
           username VARCHAR NOT NULL,
+          email VARCHAR NOT NULL,
           first_name VARCHAR NOT NULL,
           surname VARCHAR NOT NULL,
           avatar_url VARCHAR NOT NULL DEFAULT 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
@@ -45,11 +46,11 @@ const seed = ({
       db.query(`
         CREATE TABLE posts (
           post_id SERIAL PRIMARY KEY,
+          img_url VARCHAR,
           author_id INT NOT NULL REFERENCES users (user_id),
-          latitude NUMERIC NOT NULL,
-          longitude NUMERIC NOT NULL,
           body VARCHAR,
-          created_at TIMESTAMP DEFAULT NOW()
+          created_at TIMESTAMP DEFAULT NOW(),
+          site_id INT NOT NULL REFERENCES sites (site_id)
         );`)
     )
     .then(() =>
@@ -91,9 +92,10 @@ const seed = ({
 
     .then(() => {
       const insertUsersQuery = format(
-        "INSERT INTO users (username, first_name, surname, avatar_url) VALUES %L;",
-        userData.map(({ username, first_name, surname, avatar_url }) => [
+        "INSERT INTO users (username, email, first_name, surname, avatar_url) VALUES %L;",
+        userData.map(({ username, email, first_name, surname, avatar_url }) => [
           username,
+          email,
           first_name,
           surname,
           avatar_url,
@@ -116,15 +118,15 @@ const seed = ({
     .then(() => {
       const formattedPostData = postData.map(convertTimestampToDate);
       const insertPostsQuery = format(
-        `INSERT INTO posts (author_id, latitude, longitude, body, created_at)
+        `INSERT INTO posts (img_url, author_id, body, created_at, site_id)
       VALUES %L;`,
         formattedPostData.map(
-          ({ author_id, latitude, longitude, body, created_at }) => [
+          ({ img_url, author_id, body, created_at, site_id }) => [
+            img_url,
             author_id,
-            latitude,
-            longitude,
             body,
             created_at,
+            site_id,
           ]
         )
       );
