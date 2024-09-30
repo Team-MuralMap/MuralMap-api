@@ -549,8 +549,8 @@ describe("POST /api/posts/:post_id/comments", () => {
 
   test("returns 404 error message if given ID does not exist", () => {
     const newComment = {
-        author: "patterbear",
-        body: "test comment",
+      author: "patterbear",
+      body: "test comment",
     };
 
     return request(app)
