@@ -53,10 +53,10 @@ describe("GET /api/users/:user_id", () => {
 
   test("returns 404 error message if user ID does not exist", () => {
     return request(app)
-      .get("/api/users/123456789876543")
+      .get("/api/users/123456789")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -65,7 +65,7 @@ describe("GET /api/users/:user_id", () => {
       .get("/api/users/hello")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
@@ -78,9 +78,11 @@ describe("GET /api/sites", () => {
       .then((response) => {
         const sites = response.body.sites;
 
-        expect(Array.isArray(sites)).toBe(sites);
+        expect(Array.isArray(sites)).toBe(true);
 
-        for (site of sites) {
+        for (const site of sites) {
+          site.latitude = Number(site.latitude);
+          site.longitude = Number(site.longitude);
           expect(site).toMatchObject({
             site_id: expect.any(Number),
             latitude: expect.any(Number),
