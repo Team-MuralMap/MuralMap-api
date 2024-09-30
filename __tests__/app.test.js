@@ -585,3 +585,163 @@ describe("POST /api/posts/:post_id/comments", () => {
       });
   });
 });
+
+describe("DELETE /api/users/:user_id", () => {
+  test("responds with 204 and no content", () => {
+    return request(app)
+    .delete("/api/users/1")
+    .expect(204)
+    .then((response) => {
+      expect(response.body).toEqual({});
+    });
+  });
+
+  test("deletes user from users table", () => {
+    return request(app)
+    .delete("/api/users/1")
+    .expect(204)
+    .then(() => {
+      return request(app)
+      .get("/api/users/1")
+      .expect(404);
+    });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .delete("/api/users/1425557834124")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+
+  test("returns 400 error message if given ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/users/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+});
+
+describe("DELETE /api/sites/:site_id", () => {
+  test("responds with 204 and no content", () => {
+    return request(app)
+    .delete("/api/sites/1")
+    .expect(204)
+    .then((response) => {
+      expect(response.body).toEqual({});
+    });
+  });
+
+  test("deletes site from sites table", () => {
+    return request(app)
+    .delete("/api/sites/1")
+    .expect(204)
+    .then(() => {
+      return request(app)
+      .get("/api/sites/1")
+      .expect(404);
+    });
+  });
+
+  test("returns 404 error message if site ID does not exist", () => {
+    return request(app)
+      .delete("/api/sites/1425557834124")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+
+  test("returns 400 error message if given ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/sites/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+});
+
+describe("DELETE /api/posts/:post_id", () => {
+  test("responds with 204 and no content", () => {
+    return request(app)
+    .delete("/api/posts/1")
+    .expect(204)
+    .then((response) => {
+      expect(response.body).toEqual({});
+    });
+  });
+
+  test("deletes post from posts table", () => {
+    return request(app)
+    .delete("/api/posts/1")
+    .expect(204)
+    .then(() => {
+      return request(app)
+      .get("/api/posts/1")
+      .expect(404);
+    });
+  });
+
+  test("returns 404 error message if post ID does not exist", () => {
+    return request(app)
+      .delete("/api/posts/1425557834124")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+
+  test("returns 400 error message if given ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/posts/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("responds with 204 and no content", () => {
+    return request(app)
+    .delete("/api/comments/1")
+    .expect(204)
+    .then((response) => {
+      expect(response.body).toEqual({});
+    });
+  });
+
+  test("deletes comment from comments table", () => {
+    return request(app)
+    .delete("/api/comments/1")
+    .expect(204)
+    .then(() => {
+      return request(app)
+      .get("/api/comments/1")
+      .expect(404);
+    });
+  });
+
+  test("returns 404 error message if comment ID does not exist", () => {
+    return request(app)
+      .delete("/api/comments/1425557834124")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("not found");
+      });
+  });
+
+  test("returns 400 error message if given ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/comments/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("bad request");
+      });
+  });
+});
