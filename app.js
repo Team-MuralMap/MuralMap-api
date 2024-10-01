@@ -9,8 +9,8 @@ app.use(express.json());
 app.use("/api", apiRouter);
 
 app.use((err, request, response, next) => {
-  if(err.code === '23502') {
-    response.status(400).send('Bad Request');
+  if (err.code === "23502") {
+    response.status(400).send("Bad Request");
   } else {
     response.status(err.status).send(err.msg);
   }

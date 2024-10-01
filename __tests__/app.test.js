@@ -261,8 +261,9 @@ describe("POST /api/users", () => {
   test("returns newly added user object with correct properties", () => {
     const newUser = {
       username: "test_user",
-      avatar_url: "https://picsum.photos/300",
+      email: "testuser@test.com",
       name: "Test User",
+      avatar_url: "https://picsum.photos/300",
     };
 
     return request(app)
@@ -276,8 +277,9 @@ describe("POST /api/users", () => {
         expect(responseUser).toMatchObject({
           user_id: expect.any(Number),
           username: "test_user",
-          avatar_url: "https://picsum.photos/300",
+          email: "testuser@test.com",
           name: "Test User",
+          avatar_url: "https://picsum.photos/300",
         });
       });
   });
@@ -285,12 +287,13 @@ describe("POST /api/users", () => {
   test("user is added to the database", () => {
     const newUser = {
       username: "test_user",
-      avatar_url: "https://picsum.photos/300",
+      email: "testuser@test.com",
       name: "Test User",
+      avatar_url: "https://picsum.photos/300",
     };
 
     return request(app)
-      .user("/api/users")
+      .post("/api/users")
       .send(newUser)
       .set("Accept", "application/json")
       .expect(201)
@@ -306,8 +309,9 @@ describe("POST /api/users", () => {
             expect(responseUser).toMatchObject({
               user_id: expect.any(Number),
               username: "test_user",
-              avatar_url: "https://picsum.photos/300",
+              email: "testuser@test.com",
               name: "Test User",
+              avatar_url: "https://picsum.photos/300",
             });
           });
       });
@@ -324,7 +328,7 @@ describe("POST /api/users", () => {
       .set("Accept", "application/json")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
@@ -593,7 +597,7 @@ describe("DELETE /api/users/:user_id", () => {
       .delete("/api/users/12345")
       .expect(404)
       .then((response) => {
-        expect(response.res.statusMessage).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -602,7 +606,7 @@ describe("DELETE /api/users/:user_id", () => {
       .get("/api/users/hello")
       .expect(400)
       .then((response) => {
-        expect(response.res.statusMessage).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
