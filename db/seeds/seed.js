@@ -57,10 +57,10 @@ const seed = ({
         CREATE TABLE comments (
           comment_id SERIAL PRIMARY KEY,
           body VARCHAR,
-          post_id INT NOT NULL REFERENCES posts (post_id) on delete cascade,
+          post_id INT NOT NULL REFERENCES posts (post_id) ON DELETE CASCADE,
           author_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
           created_at TIMESTAMP DEFAULT NOW(),
-          reply_to INT REFERENCES comments (comment_id) on delete cascade
+          reply_to INT REFERENCES comments (comment_id)  ON DELETE CASCADE
         );`)
     )
     .then(() => {
