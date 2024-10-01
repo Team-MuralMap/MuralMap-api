@@ -1,4 +1,4 @@
-const { accessUsers, accessUser } = require("../models/users.models");
+const { accessUsers, accessUser, removeUser } = require("../models/users.models");
 
 exports.getUsers = (request, response, next) => {
   accessUsers()
@@ -17,6 +17,18 @@ exports.getUserByUserId = (request, response, next) => {
       response.status(200).send({ user: userData });
     })
     .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteUser = (request, response, next) => {
+  const { user_id } = request.params;
+  removeUser(user_id)
+    .then(() => {
+      response.status(204).send();
+    })
+    .catch((err) => {
+      console.log(err)
       next(err);
     });
 };

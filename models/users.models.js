@@ -25,3 +25,17 @@ exports.accessUser = (user_id) => {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 };
+
+exports.removeUser = (user_id) => {
+  const query = format("DELETE FROM users WHERE user_id = %L RETURNING *;", user_id);
+
+  console.log(query)
+
+  return db.query(query)
+  .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: 'not found' });
+      }
+      return result.rows[0];
+    });
+};

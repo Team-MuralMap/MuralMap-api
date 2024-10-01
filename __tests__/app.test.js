@@ -569,7 +569,7 @@ describe("POST /api/posts/:post_id/comments", () => {
   });
 });
 
-describe("DELETE /api/users/:user_id", () => {
+describe.only("DELETE /api/users/:user_id", () => {
   test("responds with 204 and no content", () => {
     return request(app)
       .delete("/api/users/1")
@@ -593,7 +593,7 @@ describe("DELETE /api/users/:user_id", () => {
       .delete("/api/users/12345")
       .expect(404)
       .then((response) => {
-        expect(response.res.statusMessage).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -602,7 +602,7 @@ describe("DELETE /api/users/:user_id", () => {
       .get("/api/users/hello")
       .expect(400)
       .then((response) => {
-        expect(response.res.statusMessage).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });

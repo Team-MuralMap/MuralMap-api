@@ -56,4 +56,4 @@ exports.removeSite = (site_id) => {
       }
       return result.rows[0];
     });
-}
+};
