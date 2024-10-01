@@ -404,7 +404,7 @@ describe("POST /api/sites", () => {
 describe("POST /api/posts", () => {
   test("returns newly added post object with correct properties", () => {
     const newPost = {
-      user_id: 1,
+      author_id: 1,
       img_url: "https://picsum.photos/300",
       body: "test post",
       site_id: 1,
@@ -431,7 +431,7 @@ describe("POST /api/posts", () => {
 
   test("post is added to the database", () => {
     const newPost = {
-      user_id: 1,
+      author_id: 1,
       img_url: "https://picsum.photos/300",
       body: "test post",
       site_id: 1,
@@ -482,7 +482,7 @@ describe("POST /api/posts", () => {
 describe("POST /api/posts/:post_id/comments", () => {
   test("returns newly added comment object with correct properties", () => {
     const newComment = {
-      author: 1,
+      author_id: 1,
       body: "test comment",
     };
 
@@ -496,10 +496,10 @@ describe("POST /api/posts/:post_id/comments", () => {
 
         expect(responseComment).toMatchObject({
           comment_id: expect.any(Number),
-          author: 1,
+          author_id: 1,
           post_id: 1,
           body: "test comment",
-          created_at: "2024-09-27T14:52:00.000Z",
+          created_at: expect.any(String),
           reply_to: null,
         });
       });
@@ -507,8 +507,8 @@ describe("POST /api/posts/:post_id/comments", () => {
 
   test("comment is added to the database", () => {
     const newComment = {
-      author: 1,
-      body: "test comment",
+      author_id: 1,
+      body: "testing comment",
     };
 
     return request(app)
@@ -523,14 +523,14 @@ describe("POST /api/posts/:post_id/comments", () => {
           .get(`/api/comments/${newCommentID}`)
           .expect(200)
           .then((response) => {
-            const responseComment = response.body.post;
+            const responseComment = response.body.comment;
 
             expect(responseComment).toMatchObject({
               comment_id: expect.any(Number),
-              author: 1,
+              author_id: 1,
               post_id: 1,
-              body: "test comment",
-              created_at: "2024-09-27T14:52:00.000Z",
+              body: "testing comment",
+              created_at: expect.any(String),
               reply_to: null,
             });
           });
@@ -539,7 +539,7 @@ describe("POST /api/posts/:post_id/comments", () => {
 
   test("returns 404 error message if given ID does not exist", () => {
     const newComment = {
-      author: 1,
+      author_id: 1,
       body: "test comment",
     };
 
@@ -593,7 +593,7 @@ describe("DELETE /api/users/:user_id", () => {
       .delete("/api/users/12345")
       .expect(404)
       .then((response) => {
-        expect(response.res.statusMessage).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -602,7 +602,7 @@ describe("DELETE /api/users/:user_id", () => {
       .get("/api/users/hello")
       .expect(400)
       .then((response) => {
-        expect(response.res.statusMessage).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });

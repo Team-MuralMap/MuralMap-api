@@ -1,4 +1,7 @@
-const { getCommentsByPostId } = require("../controllers/comments.controllers");
+const {
+  getCommentsByPostId,
+  postCommentByPostId,
+} = require("../controllers/comments.controllers");
 const {
   getPosts,
   getPostByPostId,
@@ -13,5 +16,5 @@ postsRouter.get("/", getPosts);
 postsRouter.get("/:post_id", getPostByPostId);
 postsRouter.get("/:post_id/comments", getCommentsByPostId);
 postsRouter.post("/", postPost);
-// app.post("/api/posts/:post_id/comments", postCommentByPostId)
+postsRouter.post("/:post_id/comments", postCommentByPostId);
 postsRouter.delete("/:post_id", deletePostByPostId);

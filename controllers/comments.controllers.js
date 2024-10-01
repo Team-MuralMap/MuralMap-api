@@ -2,6 +2,7 @@ const {
   accessCommentsByPostId,
   accessCommentByCommentId,
   removeCommentByCommentId,
+  insertCommentByPostId,
 } = require("../models/comments.models");
 
 exports.getCommentsByPostId = (request, response, next) => {
@@ -20,6 +21,17 @@ exports.getCommentByCommentId = (request, response, next) => {
   accessCommentByCommentId(params.comment_id)
     .then((commentData) => {
       response.status(200).send({ comment: commentData });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postCommentByPostId = (request, response, next) => {
+  const { body, params } = request;
+  insertCommentByPostId(body, params.post_id)
+    .then((postedComment) => {
+      response.status(201).send({ comment: postedComment });
     })
     .catch((err) => {
       next(err);
