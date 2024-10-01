@@ -1,11 +1,21 @@
+const { response, request } = require("../app");
 const {
   getSites,
   getSiteBySiteId,
+  postSite,
 } = require("../controllers/sites.controllers");
 
 const sitesRouter = require("express").Router();
-module.exports = sitesRouter;
 
-sitesRouter.get("/", getSites);
+sitesRouter
+.route("/")
+.get((request, response, next) => {
+  getSites(request, response, next);
+})
+.post((request, response, next) => {
+  postSite(request, response, next);
+});
+
 sitesRouter.get("/:site_id", getSiteBySiteId);
-// app.post("/api/sites", postSite)
+
+module.exports = sitesRouter;
