@@ -35,7 +35,7 @@ const seed = ({
         db.query(`
         CREATE TABLE sites (
           site_id SERIAL PRIMARY KEY,
-          author_id INT NOT NULL REFERENCES users (user_id),
+          author_id INT NOT NULL REFERENCES users (user_id) on delete set null,
           latitude NUMERIC NOT NULL,
           longitude NUMERIC NOT NULL
         );`)
@@ -49,7 +49,7 @@ const seed = ({
           author_id INT NOT NULL REFERENCES users (user_id),
           body VARCHAR,
           created_at TIMESTAMP DEFAULT NOW(),
-          site_id INT NOT NULL REFERENCES sites (site_id)
+          site_id INT NOT NULL REFERENCES sites (site_id) on delete cascade
         );`)
     )
     .then(() =>
@@ -57,7 +57,7 @@ const seed = ({
         CREATE TABLE comments (
           comment_id SERIAL PRIMARY KEY,
           body VARCHAR,
-          post_id INT NOT NULL REFERENCES posts (post_id),
+          post_id INT NOT NULL REFERENCES posts (post_id) on delete cascade,
           author_id INT NOT NULL REFERENCES users (user_id),
           created_at TIMESTAMP DEFAULT NOW(),
           reply_to INT REFERENCES comments (comment_id) on delete cascade
@@ -67,19 +67,19 @@ const seed = ({
       const postLikesTablePromise = db.query(`
         CREATE TABLE postLikes (
           like_id SERIAL PRIMARY KEY,
-          post_id INT REFERENCES posts (post_id),
+          post_id INT REFERENCES posts (post_id) on delete cascade,
           user_id INT REFERENCES users (user_id)
         );`);
       const visitsTablePromise = db.query(`
         CREATE TABLE visits (
           visit_id SERIAL PRIMARY KEY,
-          post_id INT REFERENCES posts (post_id),
+          post_id INT REFERENCES posts (post_id) on delete cascade,
           user_id INT REFERENCES users (user_id)
         );`);
       const commentLikesTablePromise = db.query(`
         CREATE TABLE commentLikes (
           comment_like_id SERIAL PRIMARY KEY,
-          comment_id INT REFERENCES comments (comment_id),
+          comment_id INT REFERENCES comments (comment_id) on delete cascade,
           user_id INT REFERENCES users (user_id)
         );`);
       return Promise.all([

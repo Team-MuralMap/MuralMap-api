@@ -1,4 +1,9 @@
-const { accessPosts, accessPost } = require("../models/posts.models");
+const {
+  accessPosts,
+  accessPost,
+  removePostByPostId,
+  insertPost,
+} = require("../models/posts.models");
 
 exports.getPosts = (request, response, next) => {
   accessPosts()
@@ -15,6 +20,27 @@ exports.getPostByPostId = (request, response, next) => {
   accessPost(params.post_id)
     .then((postData) => {
       response.status(200).send({ post: postData });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.postPost = (request, response, next) => {
+  const { body } = request;
+  insertPost(body)
+    .then((postedPost) => {
+      response.status(201).send({ post: postedPost });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deletePostByPostId = (request, response, next) => {
+  const { params } = request;
+  removePostByPostId(params.post_id)
+    .then(() => {
+      response.status(204).send();
     })
     .catch((err) => {
       next(err);

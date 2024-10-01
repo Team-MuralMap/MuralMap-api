@@ -404,9 +404,10 @@ describe("POST /api/sites", () => {
 describe("POST /api/posts", () => {
   test("returns newly added post object with correct properties", () => {
     const newPost = {
-      author: 1,
+      user_id: 1,
       img_url: "https://picsum.photos/300",
       body: "test post",
+      site_id: 1,
     };
 
     return request(app)
@@ -419,7 +420,7 @@ describe("POST /api/posts", () => {
 
         expect(responsePost).toMatchObject({
           post_id: expect.any(Number),
-          author: 1,
+          author_id: 1,
           img_url: "https://picsum.photos/300",
           body: "test post",
           created_at: expect.any(String),
@@ -430,9 +431,10 @@ describe("POST /api/posts", () => {
 
   test("post is added to the database", () => {
     const newPost = {
-      author: 1,
+      user_id: 1,
       img_url: "https://picsum.photos/300",
       body: "test post",
+      site_id: 1,
     };
 
     return request(app)
@@ -451,7 +453,7 @@ describe("POST /api/posts", () => {
 
             expect(responsePost).toMatchObject({
               post_id: expect.any(Number),
-              author: 1,
+              author_id: 1,
               img_url: "https://picsum.photos/300",
               body: "test post",
               created_at: expect.any(String),
@@ -472,7 +474,7 @@ describe("POST /api/posts", () => {
       .set("Accept", "application/json")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
@@ -667,7 +669,7 @@ describe("DELETE /api/posts/:post_id", () => {
       .delete("/api/posts/12345")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -676,7 +678,7 @@ describe("DELETE /api/posts/:post_id", () => {
       .get("/api/posts/hello")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
