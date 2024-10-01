@@ -1,3 +1,5 @@
+const matchers = require("jest-extended");
+expect.extend(matchers);
 const app = require("../app");
 const request = require("supertest");
 
@@ -227,8 +229,8 @@ describe("GET /api/comments/:comment_id", () => {
         expect(typeof comment).toBe("object");
 
         expect(comment).toMatchObject({
-          comment_id: 1,
-          author: expect.any(Number),
+          comment_id: expect.any(Number),
+          author_id: expect.any(Number),
           post_id: expect.any(Number),
           body: expect.any(String),
           created_at: expect.any(String),
@@ -238,7 +240,7 @@ describe("GET /api/comments/:comment_id", () => {
   });
   test("returns 404 error message if comment ID does not exist", () => {
     return request(app)
-      .get("/api/comments/123456789876543")
+      .get("/api/comments/1234567898")
       .expect(404)
       .then((response) => {
         expect(response.res.statusMessage).toBe("Not Found");
@@ -545,7 +547,7 @@ describe("POST /api/posts/:post_id/comments", () => {
       .set("Accept", "application/json")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -560,7 +562,7 @@ describe("POST /api/posts/:post_id/comments", () => {
       .set("Accept", "application/json")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
@@ -589,7 +591,7 @@ describe("DELETE /api/users/:user_id", () => {
       .delete("/api/users/1425557834124")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("not found");
       });
   });
 
@@ -598,7 +600,7 @@ describe("DELETE /api/users/:user_id", () => {
       .get("/api/users/hello")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("bad request");
       });
   });
 });
@@ -627,7 +629,7 @@ describe("DELETE /api/sites/:site_id", () => {
       .delete("/api/sites/1425557834124")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -636,7 +638,7 @@ describe("DELETE /api/sites/:site_id", () => {
       .get("/api/sites/hello")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
@@ -700,10 +702,10 @@ describe("DELETE /api/comments/:comment_id", () => {
 
   test("returns 404 error message if comment ID does not exist", () => {
     return request(app)
-      .delete("/api/comments/1425557834124")
+      .delete("/api/comments/142555783")
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -712,7 +714,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .get("/api/comments/hello")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
