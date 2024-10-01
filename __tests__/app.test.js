@@ -157,6 +157,32 @@ describe("GET /api/posts", () => {
   });
 });
 
+describe("GET /api/posts queries: fitlering by any valid column", () => {
+  test("can be filtered by site_id", () => {
+    return request(app)
+      .get("/api/posts?site_id=3")
+      .expect(200)
+      .then((reponse) => {
+        const posts = response.body.posts;
+
+        expect(Array.isArray(posts)).toBe(true);
+
+        expect(posts.length >= 2).toBe(true);
+        for (const post of posts) {
+          expect(post).toMatchObject({
+            post_id: expect.any(Number),
+            author_id: expect.any(Number),
+            img_url: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            site_id: 3,
+          });
+        }
+      });
+  });
+  // test("can be filtered by user_id", () => {});
+});
+
 describe("GET /api/posts/:post_id", () => {
   test("returns post object with given ID and correct properties", () => {
     return request(app)
