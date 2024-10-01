@@ -1,4 +1,4 @@
-const { accessSites, accessSite } = require("../models/sites.models");
+const { accessSites, accessSite, insertSite } = require("../models/sites.models");
 
 exports.getSites = (request, response, next) => {
   accessSites()
@@ -20,3 +20,15 @@ exports.getSiteBySiteId = (request, response, next) => {
       next(err);
     });
 };
+
+exports.postSite = (request, response, next) => {
+  const newSite = request.body;
+
+  insertSite(newSite)
+  .then((site) => {
+    response.status(201).send({site});
+  })
+  .catch((err) => {
+    next(err);
+  });
+}
