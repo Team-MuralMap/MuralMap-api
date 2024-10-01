@@ -1,6 +1,6 @@
 const format = require("pg-format");
-const db = require("../connection");
-const { checkIfNum, checkExists } = require("../utils/utils");
+const db = require("../db/connection");
+const { checkIfNum, checkExists } = require("../db/utils/utils");
 
 exports.accessUsers = () => {
   return db.query("SELECT * FROM users").then(({ rows }) => {

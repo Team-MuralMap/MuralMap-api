@@ -1,6 +1,6 @@
 const format = require("pg-format");
-const { checkIfNum, checkExists } = require("../utils/utils");
-const db = require("../connection");
+const { checkIfNum, checkExists } = require("../db/utils/utils");
+const db = require("../db/connection");
 
 exports.accessCommentsByPostId = (post_id) => {
   if (checkIfNum(post_id)) {

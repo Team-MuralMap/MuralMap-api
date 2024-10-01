@@ -1,5 +1,5 @@
-const db = require("../connection");
-const { checkIfNum, checkExists } = require("../utils/utils");
+const db = require("../db/connection");
+const { checkIfNum, checkExists } = require("../db/utils/utils");
 const fs = require("fs/promises");
 const format = require("pg-format");
 
