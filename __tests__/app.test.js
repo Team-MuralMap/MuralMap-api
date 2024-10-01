@@ -53,7 +53,7 @@ describe("GET /api/users/:user_id", () => {
 
   test("returns 404 error message if user ID does not exist", () => {
     return request(app)
-      .get("/api/users/123456789")
+      .get("/api/users/12345")
       .expect(404)
       .then((response) => {
         expect(response.res.statusMessage).toBe("Not Found");
@@ -116,7 +116,7 @@ describe("GET /api/sites/:site_id", () => {
   });
   test("returns 404 error message if site ID does not exist", () => {
     return request(app)
-      .get("/api/sites/1234567898")
+      .get("/api/sites/12345")
       .expect(404)
       .then((response) => {
         expect(response.res.statusMessage).toBe("Not Found");
@@ -179,7 +179,7 @@ describe("GET /api/posts/:post_id", () => {
   });
   test("returns 404 error message if post ID does not exist", () => {
     return request(app)
-      .get("/api/posts/123456789")
+      .get("/api/posts/12345")
       .expect(404)
       .then((response) => {
         expect(response.res.statusMessage).toBe("Not Found");
@@ -240,7 +240,7 @@ describe("GET /api/comments/:comment_id", () => {
   });
   test("returns 404 error message if comment ID does not exist", () => {
     return request(app)
-      .get("/api/comments/1234567898")
+      .get("/api/comments/12345")
       .expect(404)
       .then((response) => {
         expect(response.res.statusMessage).toBe("Not Found");
@@ -332,9 +332,9 @@ describe("POST /api/users", () => {
 describe("POST /api/sites", () => {
   test("returns newly added site object with correct properties", () => {
     const newSite = {
+      author_id: 1,
       latitude: 99999,
       longitude: 99999,
-      author_id: 1,
     };
 
     return request(app)
@@ -343,12 +343,12 @@ describe("POST /api/sites", () => {
       .set("Accept", "application/json")
       .expect(201)
       .then((response) => {
-        const responseSite = response.body.post;
+        const responseSite = response.body.site;
 
         expect(responseSite).toMatchObject({
           site_id: expect.any(Number),
-          latitude: 99999,
-          longitude: 99999,
+          latitude: "99999",
+          longitude: "99999",
           author_id: 1,
         });
       });
@@ -356,9 +356,9 @@ describe("POST /api/sites", () => {
 
   test("site is added to the database", () => {
     const newSite = {
+      author_id: 1,
       latitude: 99999,
       longitude: 99999,
-      author_id: 1,
     };
 
     return request(app)
@@ -367,18 +367,18 @@ describe("POST /api/sites", () => {
       .set("Accept", "application/json")
       .expect(201)
       .then((response) => {
-        const newSiteID = response.body.post.post_id;
+        const newSiteID = response.body.site.site_id;
 
         return request(app)
           .get(`/api/sites/${newSiteID}`)
           .expect(200)
           .then((response) => {
-            const responseSite = response.body.post;
+            const responseSite = response.body.site;
 
             expect(responseSite).toMatchObject({
               site_id: expect.any(Number),
-              latitude: 99999,
-              longitude: 99999,
+              latitude: "99999",
+              longitude: "99999",
               author_id: 1,
             });
           });
@@ -396,7 +396,7 @@ describe("POST /api/sites", () => {
       .set("Accept", "application/json")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
@@ -542,7 +542,7 @@ describe("POST /api/posts/:post_id/comments", () => {
     };
 
     return request(app)
-      .post("/api/posts/132456789056/comments")
+      .post("/api/posts/12345/comments")
       .send(newComment)
       .set("Accept", "application/json")
       .expect(404)
@@ -588,7 +588,7 @@ describe("DELETE /api/users/:user_id", () => {
 
   test("returns 404 error message if user ID does not exist", () => {
     return request(app)
-      .delete("/api/users/1425557834124")
+      .delete("/api/users/12345")
       .expect(404)
       .then((response) => {
         expect(response.res.statusMessage).toBe("not found");
@@ -626,7 +626,7 @@ describe("DELETE /api/sites/:site_id", () => {
 
   test("returns 404 error message if site ID does not exist", () => {
     return request(app)
-      .delete("/api/sites/1425557834124")
+      .delete("/api/sites/12345")
       .expect(404)
       .then((response) => {
         expect(response.res.statusMessage).toBe("Not Found");
@@ -664,7 +664,7 @@ describe("DELETE /api/posts/:post_id", () => {
 
   test("returns 404 error message if post ID does not exist", () => {
     return request(app)
-      .delete("/api/posts/1425557834124")
+      .delete("/api/posts/12345")
       .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe("not found");
@@ -702,7 +702,7 @@ describe("DELETE /api/comments/:comment_id", () => {
 
   test("returns 404 error message if comment ID does not exist", () => {
     return request(app)
-      .delete("/api/comments/142555783")
+      .delete("/api/comments/12345")
       .expect(404)
       .then((response) => {
         expect(response.res.statusMessage).toBe("Not Found");
@@ -761,7 +761,7 @@ describe("PATCH /api/posts/:post_id", () => {
     const postUpdate = { body: "This is an updated body." };
 
     return request(app)
-      .patch("/api/posts/1322334432")
+      .patch("/api/posts/12345")
       .send(postUpdate)
       .expect(404)
       .then((response) => {
@@ -824,7 +824,7 @@ describe("PATCH /api/comments/:comment_id", () => {
     const commentUpdate = { body: "This is an updated body." };
 
     return request(app)
-      .patch("/api/comments/1322334432")
+      .patch("/api/comments/12345")
       .send(commentUpdate)
       .expect(404)
       .then((response) => {

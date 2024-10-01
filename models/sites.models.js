@@ -25,3 +25,23 @@ exports.accessSite = (site_id) => {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 };
+
+exports.insertSite = (site) => {
+  const formattedSite = [
+    site.author_id,
+    site.longitude,
+    site.latitude,
+  ];
+
+  const query = format(`
+    INSERT INTO sites(author_id, longitude, latitude)
+    VALUES(%L)
+    RETURNING *`,
+    formattedSite
+  );
+
+  return db.query(query)
+  .then((result) => {
+    return result.rows[0];
+  });
+}
