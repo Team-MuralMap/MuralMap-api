@@ -2,7 +2,6 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
-
   "GET /api/users": {
     "description": "serves an array of all users",
     "queries": [],
@@ -10,13 +9,97 @@
       "users": [
         {
           "user_id": 1,
-          "user_name": "Phillip6",
+          "username": "Phillip6",
           "email": "phillip6@gmail.com",
-          "start_datetime": "1589418120000",
-          "first_name": "Phil",
-          "surname": "Phillips"
+          "name": "Phil Phillips",
+          "avatar_url": "https://deadline.com/wp-content/uploads/2023/01/dr-phil-mcgraw-2.jpg?w=681&h=383&crop=1"
         }
       ]
+    }
+  },
+  "GET /api/users/:user_id": {
+    "description": "serves a user according to their id",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "user_id": 2,
+        "username": "Stacey",
+        "email": "staceyjones@gmail.com",
+        "name": "Stacey Jones",
+        "avatar_url": "https://hackspirit.com/wp-content/uploads/2021/06/Copy-of-Rustic-Female-Teen-Magazine-Cover.jpg"
+      }
+    }
+  },
+  "GET /api/posts": {
+    "description": "serves an array of all posts",
+    "queries": [],
+    "exampleResponse": {
+      "posts": [
+        {
+          "post_id": 1,
+          "img_url": "https://upload.wikimedia.org/wikipedia/commons/9/91/Pierre_Brossolette_-_C215_%28cropped%29.jpg",
+          "author_id": 1,
+          "body": "here is a nice",
+          "created_at": "2020-11-11T15:09:00.000Z",
+          "site_id": 1
+        }
+      ]
+    }
+  },
+  "GET /api/posts/:post_id": {
+    "description": "serves a post according to its id",
+    "queries": [],
+    "exampleResponse": {
+      "post": {
+        "post_id": 3,
+        "img_url": "https://media.cnn.com/api/v1/images/stellar/prod/190703180856-01-berlin-wall-eastside-gallery-restricted.jpg?q=w_2000,c_fill/f_webp",
+        "author_id": 1,
+        "body": "Berlin vibes",
+        "created_at": "2024-01-11T10:27:11.494Z",
+        "site_id": 3
+      }
+    }
+  },
+  "GET /api/posts/:post_id/comments": {
+    "description": "serves an array of comments from a post",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 3,
+          "body": "i've been there",
+          "post_id": 2,
+          "author_id": 2,
+          "created_at": "2020-11-11T15:09:00.000Z",
+          "reply_to": 1
+        }
+      ]
+    }
+  },
+  "GET /api/sites": {
+    "description": "serves an array of sites",
+    "queries": [],
+    "exampleResponse": {
+      "sites": [
+        {
+          "site_id": 1,
+          "author_id": 1,
+          "latitude": "43.961623",
+          "longitude": "21.163367"
+        }
+      ]
+    }
+  },
+  "GET /api/sites/:site_id": {
+    "description": "serves a site according to its id",
+    "queries": [],
+    "exampleResponse": {
+      "site": {
+        "site_id": 4,
+        "author_id": 1,
+        "latitude": "50.845395",
+        "longitude": "-0.166811"
+      }
     }
   }
 }
