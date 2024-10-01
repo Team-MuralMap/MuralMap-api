@@ -60,7 +60,7 @@ const seed = ({
           post_id INT NOT NULL REFERENCES posts (post_id),
           author_id INT NOT NULL REFERENCES users (user_id),
           created_at TIMESTAMP DEFAULT NOW(),
-          reply_to INT REFERENCES comments (comment_id)
+          reply_to INT REFERENCES comments (comment_id) on delete cascade
         );`)
     )
     .then(() => {
