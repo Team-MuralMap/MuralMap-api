@@ -28,3 +28,13 @@ exports.checkExists = (table, column, value) => {
     return true;
   });
 };
+
+exports.coordinatesToNumbers = ({
+  latitude: latitudeString,
+  longitude: longitudeString,
+  ...rest
+}) => {
+  const latitude = latitudeString ? Number(latitudeString) : undefined;
+  const longitude = longitudeString ? Number(longitudeString) : undefined;
+  return { latitude, longitude, ...rest };
+};
