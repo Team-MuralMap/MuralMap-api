@@ -31,11 +31,11 @@ exports.accessSite = (site_id) => {
 };
 
 exports.insertSite = (site) => {
-  const formattedSite = [site.author_id, site.longitude, site.latitude];
+  const formattedSite = [site.user_id, site.longitude, site.latitude];
 
   const query = format(
     `
-    INSERT INTO sites(author_id, longitude, latitude)
+    INSERT INTO sites(user_id, longitude, latitude)
     VALUES(%L)
     RETURNING *`,
     formattedSite

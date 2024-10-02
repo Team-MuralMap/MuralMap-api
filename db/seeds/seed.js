@@ -35,7 +35,7 @@ const seed = ({
         db.query(`
         CREATE TABLE sites (
           site_id SERIAL PRIMARY KEY,
-          author_id INT REFERENCES users (user_id) ON DELETE SET NULL,
+          user_id INT REFERENCES users (user_id) ON DELETE SET NULL,
           latitude NUMERIC NOT NULL,
           longitude NUMERIC NOT NULL
         );`)
@@ -46,7 +46,7 @@ const seed = ({
         CREATE TABLE posts (
           post_id SERIAL PRIMARY KEY,
           img_url VARCHAR,
-          author_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+          user_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
           body VARCHAR,
           created_at TIMESTAMP DEFAULT NOW(),
           site_id INT NOT NULL REFERENCES sites (site_id) ON DELETE CASCADE
@@ -58,7 +58,7 @@ const seed = ({
           comment_id SERIAL PRIMARY KEY,
           body VARCHAR,
           post_id INT NOT NULL REFERENCES posts (post_id) ON DELETE CASCADE,
-          author_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+          user_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
           created_at TIMESTAMP DEFAULT NOW(),
           reply_to INT REFERENCES comments (comment_id)  ON DELETE CASCADE
         );`)
@@ -103,10 +103,10 @@ const seed = ({
     })
     .then(() => {
       const insertSitesQuery = format(
-        `INSERT INTO sites (author_id, latitude, longitude)
+        `INSERT INTO sites (user_id, latitude, longitude)
         VALUES %L;`,
-        siteData.map(({ author_id, latitude, longitude }) => [
-          author_id,
+        siteData.map(({ user_id, latitude, longitude }) => [
+          user_id,
           latitude,
           longitude,
         ])
@@ -116,12 +116,12 @@ const seed = ({
     .then(() => {
       const formattedPostData = postData.map(convertTimestampToDate);
       const insertPostsQuery = format(
-        `INSERT INTO posts (img_url, author_id, body, created_at, site_id)
+        `INSERT INTO posts (img_url, user_id, body, created_at, site_id)
       VALUES %L;`,
         formattedPostData.map(
-          ({ img_url, author_id, body, created_at, site_id }) => [
+          ({ img_url, user_id, body, created_at, site_id }) => [
             img_url,
-            author_id,
+            user_id,
             body,
             created_at,
             site_id,
@@ -133,13 +133,13 @@ const seed = ({
     .then(() => {
       const formattedCommentData = commentData.map(convertTimestampToDate);
       const insertCommentQuery = format(
-        `INSERT INTO comments (body, post_id, author_id, created_at, reply_to)
+        `INSERT INTO comments (body, post_id, user_id, created_at, reply_to)
       VALUES %L;`,
         formattedCommentData.map(
-          ({ body, post_id, author_id, created_at, reply_to }) => [
+          ({ body, post_id, user_id, created_at, reply_to }) => [
             body,
             post_id,
-            author_id,
+            user_id,
             created_at,
             reply_to,
           ]

@@ -85,7 +85,7 @@ describe("GET /api/sites", () => {
             site_id: expect.any(Number),
             latitude: expect.any(Number),
             longitude: expect.any(Number),
-            author_id: expect.any(Number),
+            user_id: expect.any(Number),
           });
         }
       });
@@ -106,7 +106,7 @@ describe("GET /api/sites/:site_id", () => {
           site_id: 1,
           latitude: expect.any(Number),
           longitude: expect.any(Number),
-          author_id: expect.any(Number),
+          user_id: expect.any(Number),
         });
       });
   });
@@ -142,7 +142,7 @@ describe("GET /api/posts", () => {
         for (const post of posts) {
           expect(post).toMatchObject({
             post_id: expect.any(Number),
-            author_id: expect.any(Number),
+            user_id: expect.any(Number),
             img_url: expect.any(String),
             body: expect.any(String),
             created_at: expect.any(String),
@@ -167,7 +167,7 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
         for (const post of posts) {
           expect(post).toMatchObject({
             post_id: expect.any(Number),
-            author_id: expect.any(Number),
+            user_id: expect.any(Number),
             img_url: expect.any(String),
             body: expect.any(String),
             created_at: expect.any(String),
@@ -176,11 +176,11 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
         }
       });
   });
-  test("can be filtered by author_id", () => {
+  test("can be filtered by user_id", () => {
     return (
       request(app)
-        .get("/api/posts?author_id=1")
-        // this could be user_id or author_id, maybe even code both? I guess the column name is author_id
+        .get("/api/posts?user_id=1")
+        // this could be user_id or user_id, maybe even code both? I guess the column name is user_id
         .expect(200)
         .then((response) => {
           const posts = response.body.posts;
@@ -191,7 +191,7 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
           for (const post of posts) {
             expect(post).toMatchObject({
               post_id: expect.any(Number),
-              author_id: 1,
+              user_id: 1,
               img_url: expect.any(String),
               body: expect.any(String),
               created_at: expect.any(String),
@@ -213,7 +213,7 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
         for (const post of posts) {
           expect(post).toMatchObject({
             post_id: expect.any(Number),
-            author_id: expect.any(Number),
+            user_id: expect.any(Number),
             img_url: expect.any(String),
             body: expect.any(String),
             created_at: expect.any(String),
@@ -224,7 +224,7 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
   });
   test("returns 404 error message if filtering id does not exist", () => {
     return request(app)
-      .get("/api/posts?author_id=4000")
+      .get("/api/posts?user_id=4000")
       .expect(404)
       .then((response) => {
         expect(response.res.statusMessage).toBe("Not Found");
@@ -252,7 +252,7 @@ describe("GET /api/posts/:post_id", () => {
 
         expect(post).toMatchObject({
           post_id: 1,
-          author_id: expect.any(Number),
+          user_id: expect.any(Number),
           img_url: expect.any(String),
           body: expect.any(String),
           created_at: expect.any(String),
@@ -291,7 +291,7 @@ describe("GET /api/posts/:post_id/comments", () => {
         for (comment of comments) {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
-            author_id: expect.any(Number),
+            user_id: expect.any(Number),
             post_id: 1,
             body: expect.any(String),
             created_at: expect.any(String),
@@ -313,7 +313,7 @@ describe("GET /api/comments/:comment_id", () => {
 
         expect(comment).toMatchObject({
           comment_id: expect.any(Number),
-          author_id: expect.any(Number),
+          user_id: expect.any(Number),
           post_id: expect.any(Number),
           body: expect.any(String),
           created_at: expect.any(String),
@@ -419,7 +419,7 @@ describe("POST /api/users", () => {
 describe("POST /api/sites", () => {
   test("returns newly added site object with correct properties", () => {
     const newSite = {
-      author_id: 1,
+      user_id: 1,
       latitude: 99999,
       longitude: 99999,
     };
@@ -436,14 +436,14 @@ describe("POST /api/sites", () => {
           site_id: expect.any(Number),
           latitude: "99999",
           longitude: "99999",
-          author_id: 1,
+          user_id: 1,
         });
       });
   });
 
   test("site is added to the database", () => {
     const newSite = {
-      author_id: 1,
+      user_id: 1,
       latitude: 99999,
       longitude: 99999,
     };
@@ -466,7 +466,7 @@ describe("POST /api/sites", () => {
               site_id: expect.any(Number),
               latitude: 99999,
               longitude: 99999,
-              author_id: 1,
+              user_id: 1,
             });
           });
       });
@@ -491,7 +491,7 @@ describe("POST /api/sites", () => {
 describe("POST /api/posts", () => {
   test("returns newly added post object with correct properties", () => {
     const newPost = {
-      author_id: 1,
+      user_id: 1,
       img_url: "https://picsum.photos/300",
       body: "test post",
       site_id: 1,
@@ -507,7 +507,7 @@ describe("POST /api/posts", () => {
 
         expect(responsePost).toMatchObject({
           post_id: expect.any(Number),
-          author_id: 1,
+          user_id: 1,
           img_url: "https://picsum.photos/300",
           body: "test post",
           created_at: expect.any(String),
@@ -518,7 +518,7 @@ describe("POST /api/posts", () => {
 
   test("post is added to the database", () => {
     const newPost = {
-      author_id: 1,
+      user_id: 1,
       img_url: "https://picsum.photos/300",
       body: "test post",
       site_id: 1,
@@ -540,7 +540,7 @@ describe("POST /api/posts", () => {
 
             expect(responsePost).toMatchObject({
               post_id: expect.any(Number),
-              author_id: 1,
+              user_id: 1,
               img_url: "https://picsum.photos/300",
               body: "test post",
               created_at: expect.any(String),
@@ -569,7 +569,7 @@ describe("POST /api/posts", () => {
 describe("POST /api/posts/:post_id/comments", () => {
   test("returns newly added comment object with correct properties", () => {
     const newComment = {
-      author_id: 1,
+      user_id: 1,
       body: "test comment",
     };
 
@@ -583,7 +583,7 @@ describe("POST /api/posts/:post_id/comments", () => {
 
         expect(responseComment).toMatchObject({
           comment_id: expect.any(Number),
-          author_id: 1,
+          user_id: 1,
           post_id: 1,
           body: "test comment",
           created_at: expect.any(String),
@@ -594,7 +594,7 @@ describe("POST /api/posts/:post_id/comments", () => {
 
   test("comment is added to the database", () => {
     const newComment = {
-      author_id: 1,
+      user_id: 1,
       body: "testing comment",
     };
 
@@ -614,7 +614,7 @@ describe("POST /api/posts/:post_id/comments", () => {
 
             expect(responseComment).toMatchObject({
               comment_id: expect.any(Number),
-              author_id: 1,
+              user_id: 1,
               post_id: 1,
               body: "testing comment",
               created_at: expect.any(String),
@@ -626,7 +626,7 @@ describe("POST /api/posts/:post_id/comments", () => {
 
   test("returns 404 error message if given ID does not exist", () => {
     const newComment = {
-      author_id: 1,
+      user_id: 1,
       body: "test comment",
     };
 
@@ -823,7 +823,7 @@ describe("PATCH /api/posts/:post_id", () => {
 
         expect(responsePost).toEqual({
           post_id: 1,
-          author_id: expect.any(Number),
+          user_id: expect.any(Number),
           img_url: expect.any(String),
           body: "This is an updated body.",
           created_at: expect.any(String),
@@ -886,7 +886,7 @@ describe("PATCH /api/comments/:comment_id", () => {
 
         expect(responseComment).toEqual({
           comment_id: 1,
-          author_id: expect.any(Number),
+          user_id: expect.any(Number),
           post_id: expect.any(Number),
           body: "This is an updated body.",
           created_at: expect.any(String),
