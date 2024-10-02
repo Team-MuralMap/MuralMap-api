@@ -3,6 +3,7 @@ const {
   accessPost,
   removePostByPostId,
   insertPost,
+  updatePostByPostId,
 } = require("../models/posts.models");
 
 exports.getPosts = (request, response, next) => {
@@ -30,6 +31,17 @@ exports.postPost = (request, response, next) => {
   insertPost(body)
     .then((postedPost) => {
       response.status(201).send({ post: postedPost });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchPostByPostId = (request, response, next) => {
+  const { body, params } = request;
+  updatePostByPostId(body, params.post_id)
+    .then((updatedPost) => {
+      response.status(202).send({ post: updatedPost });
     })
     .catch((err) => {
       next(err);

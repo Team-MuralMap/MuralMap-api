@@ -815,7 +815,7 @@ describe("PATCH /api/posts/:post_id", () => {
     return request(app)
       .patch("/api/posts/1")
       .send(postUpdate)
-      .expect(200)
+      .expect(202)
       .then((response) => {
         const responsePost = response.body.post;
 
@@ -823,7 +823,7 @@ describe("PATCH /api/posts/:post_id", () => {
 
         expect(responsePost).toEqual({
           post_id: 1,
-          author: expect.any(Number),
+          author_id: expect.any(Number),
           img_url: expect.any(String),
           body: "This is an updated body.",
           created_at: expect.any(String),
@@ -838,7 +838,7 @@ describe("PATCH /api/posts/:post_id", () => {
     return request(app)
       .patch("/api/posts/1")
       .send(postUpdate)
-      .expect(200)
+      .expect(202)
       .then((response) => {
         const responsePost = response.body.post;
 
@@ -854,7 +854,7 @@ describe("PATCH /api/posts/:post_id", () => {
       .send(postUpdate)
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -866,7 +866,7 @@ describe("PATCH /api/posts/:post_id", () => {
       .send(postUpdate)
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
@@ -878,7 +878,7 @@ describe("PATCH /api/comments/:comment_id", () => {
     return request(app)
       .patch("/api/comments/1")
       .send(commentUpdate)
-      .expect(200)
+      .expect(202)
       .then((response) => {
         const responseComment = response.body.comment;
 
@@ -886,7 +886,7 @@ describe("PATCH /api/comments/:comment_id", () => {
 
         expect(responseComment).toEqual({
           comment_id: 1,
-          author: expect.any(Number),
+          author_id: expect.any(Number),
           post_id: expect.any(Number),
           body: "This is an updated body.",
           created_at: expect.any(String),
@@ -901,7 +901,7 @@ describe("PATCH /api/comments/:comment_id", () => {
     return request(app)
       .patch("/api/comments/1")
       .send(commentUpdate)
-      .expect(200)
+      .expect(202)
       .then((response) => {
         const responseComment = response.body.comment;
 
@@ -917,7 +917,7 @@ describe("PATCH /api/comments/:comment_id", () => {
       .send(commentUpdate)
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe("not found");
+        expect(response.res.statusMessage).toBe("Not Found");
       });
   });
 
@@ -929,7 +929,7 @@ describe("PATCH /api/comments/:comment_id", () => {
       .send(commentUpdate)
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
