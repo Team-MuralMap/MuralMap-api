@@ -65,6 +65,28 @@ exports.insertCommentByPostId = ({ body, author_id, reply_to }, post_id) => {
   }
 };
 
+exports.updateCommentByCommentId = ({ body }, comment_id) => {
+  if (checkIfNum(comment_id)) {
+    return checkExists("comments", "comment_id", comment_id)
+      .then(() => {
+        queryStr = format(
+          "UPDATE comments SET body = '%s' WHERE comment_id = %L RETURNING *;",
+          body,
+          comment_id
+        );
+        return db.query(queryStr);
+      })
+      .then(({ rows }) => {
+        return rows[0];
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+};
+
 exports.removeCommentByCommentId = (comment_id) => {
   if (checkIfNum(comment_id)) {
     return checkExists("comments", "comment_id", comment_id)
