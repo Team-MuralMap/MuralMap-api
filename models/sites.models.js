@@ -7,16 +7,35 @@ const {
 } = require("../db/utils/utils");
 
 exports.accessSites = () => {
-  return db.query("SELECT * FROM sites").then(({ rows }) => {
-    return rows.map(coordinatesToNumbers);
-  });
+  return db
+    .query(
+      `
+    SELECT
+      sites.*,
+      (ARRAY_AGG(posts.img_url ORDER BY posts.created_at))[1] AS site_preview_url
+    FROM sites LEFT JOIN posts ON sites.site_id = posts.site_id
+    GROUP BY sites.site_id;
+    `
+    )
+    .then(({ rows }) => {
+      return rows.map(coordinatesToNumbers);
+    });
 };
 
 exports.accessSite = (site_id) => {
   if (checkIfNum(site_id)) {
     return checkExists("sites", "site_id", site_id)
       .then(() => {
-        queryStr = format("SELECT * FROM sites WHERE site_id = %L;", site_id);
+        queryStr = format(
+          `SELECT
+            sites.*,
+            (ARRAY_AGG(posts.img_url ORDER BY posts.created_at))[1] AS site_preview_url
+          FROM sites LEFT JOIN posts ON sites.site_id = posts.site_id
+          WHERE sites.site_id = %L
+          GROUP BY sites.site_id;
+          `,
+          site_id
+        );
         return db.query(queryStr);
       })
       .then(({ rows }) => {
