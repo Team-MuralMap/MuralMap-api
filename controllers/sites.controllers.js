@@ -1,4 +1,5 @@
-const { accessSites, accessSite, insertSite } = require("../models/sites.models");
+const { request, response } = require("../app");
+const { accessSites, accessSite, insertSite, removeSite } = require("../models/sites.models");
 
 exports.getSites = (request, response, next) => {
   accessSites()
@@ -31,4 +32,15 @@ exports.postSite = (request, response, next) => {
   .catch((err) => {
     next(err);
   });
+};
+
+exports.deleteSiteBySiteId = (request, response, next) => {
+  const { site_id } = request.params;
+  removeSite(site_id)
+    .then(() => {
+      response.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
 }

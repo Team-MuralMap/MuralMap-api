@@ -44,4 +44,16 @@ exports.insertSite = (site) => {
   .then((result) => {
     return result.rows[0];
   });
-}
+};
+
+exports.removeSite = (site_id) => {
+  const query = format("DELETE FROM sites WHERE site_id = %L RETURNING *;", site_id);
+  
+  return db.query(query)
+  .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: 'not found' });
+      }
+      return result.rows[0];
+    });
+};

@@ -35,7 +35,7 @@ const seed = ({
         db.query(`
         CREATE TABLE sites (
           site_id SERIAL PRIMARY KEY,
-          author_id INT NOT NULL REFERENCES users (user_id) on delete set null,
+          author_id INT REFERENCES users (user_id) ON DELETE SET NULL,
           latitude NUMERIC NOT NULL,
           longitude NUMERIC NOT NULL
         );`)
@@ -46,10 +46,10 @@ const seed = ({
         CREATE TABLE posts (
           post_id SERIAL PRIMARY KEY,
           img_url VARCHAR,
-          author_id INT NOT NULL REFERENCES users (user_id),
+          author_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
           body VARCHAR,
           created_at TIMESTAMP DEFAULT NOW(),
-          site_id INT NOT NULL REFERENCES sites (site_id) on delete cascade
+          site_id INT NOT NULL REFERENCES sites (site_id) ON DELETE CASCADE
         );`)
     )
     .then(() =>
@@ -57,30 +57,30 @@ const seed = ({
         CREATE TABLE comments (
           comment_id SERIAL PRIMARY KEY,
           body VARCHAR,
-          post_id INT NOT NULL REFERENCES posts (post_id) on delete cascade,
-          author_id INT NOT NULL REFERENCES users (user_id),
+          post_id INT NOT NULL REFERENCES posts (post_id) ON DELETE CASCADE,
+          author_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
           created_at TIMESTAMP DEFAULT NOW(),
-          reply_to INT REFERENCES comments (comment_id) on delete cascade
+          reply_to INT REFERENCES comments (comment_id)  ON DELETE CASCADE
         );`)
     )
     .then(() => {
       const postLikesTablePromise = db.query(`
         CREATE TABLE postLikes (
           like_id SERIAL PRIMARY KEY,
-          post_id INT REFERENCES posts (post_id) on delete cascade,
-          user_id INT REFERENCES users (user_id)
+          post_id INT REFERENCES posts (post_id) ON DELETE CASCADE,
+          user_id INT REFERENCES users (user_id) ON DELETE CASCADE
         );`);
       const visitsTablePromise = db.query(`
         CREATE TABLE visits (
           visit_id SERIAL PRIMARY KEY,
-          post_id INT REFERENCES posts (post_id) on delete cascade,
-          user_id INT REFERENCES users (user_id)
+          post_id INT REFERENCES posts (post_id) ON DELETE CASCADE,
+          user_id INT REFERENCES users (user_id) ON DELETE CASCADE
         );`);
       const commentLikesTablePromise = db.query(`
         CREATE TABLE commentLikes (
           comment_like_id SERIAL PRIMARY KEY,
-          comment_id INT REFERENCES comments (comment_id) on delete cascade,
-          user_id INT REFERENCES users (user_id)
+          comment_id INT REFERENCES comments (comment_id) ON DELETE CASCADE,
+          user_id INT REFERENCES users (user_id) ON DELETE CASCADE
         );`);
       return Promise.all([
         postLikesTablePromise,

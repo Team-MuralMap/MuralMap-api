@@ -157,6 +157,93 @@ describe("GET /api/posts", () => {
   });
 });
 
+describe("GET /api/posts queries: fitlering by any valid column", () => {
+  test("can be filtered by site_id", () => {
+    return request(app)
+      .get("/api/posts?site_id=3")
+      .expect(200)
+      .then((response) => {
+        const posts = response.body.posts;
+
+        expect(Array.isArray(posts)).toBe(true);
+
+        expect(posts.length >= 2).toBe(true);
+        for (const post of posts) {
+          expect(post).toMatchObject({
+            post_id: expect.any(Number),
+            author_id: expect.any(Number),
+            img_url: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            site_id: 3,
+          });
+        }
+      });
+  });
+  test("can be filtered by author_id", () => {
+    return (
+      request(app)
+        .get("/api/posts?author_id=1")
+        // this could be user_id or author_id, maybe even code both? I guess the column name is author_id
+        .expect(200)
+        .then((response) => {
+          const posts = response.body.posts;
+
+          expect(Array.isArray(posts)).toBe(true);
+
+          expect(posts.length >= 4).toBe(true);
+          for (const post of posts) {
+            expect(post).toMatchObject({
+              post_id: expect.any(Number),
+              author_id: 1,
+              img_url: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              site_id: expect.any(Number),
+            });
+          }
+        })
+    );
+  });
+  test("ignores invalid column names with 200 response", () => {
+    return request(app)
+      .get("/api/posts?banana=43")
+      .expect(200)
+      .then((response) => {
+        const posts = response.body.posts;
+
+        expect(Array.isArray(posts)).toBe(true);
+
+        for (const post of posts) {
+          expect(post).toMatchObject({
+            post_id: expect.any(Number),
+            author_id: expect.any(Number),
+            img_url: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            site_id: expect.any(Number),
+          });
+        }
+      });
+  });
+  test("returns 404 error message if filtering id does not exist", () => {
+    return request(app)
+      .get("/api/posts?author_id=4000")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+  test("returns 400 error message if filtering id is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/posts?site_id=bananas")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad request");
+      });
+  });
+});
+
 describe("GET /api/posts/:post_id", () => {
   test("returns post object with given ID and correct properties", () => {
     return request(app)
@@ -261,8 +348,9 @@ describe("POST /api/users", () => {
   test("returns newly added user object with correct properties", () => {
     const newUser = {
       username: "test_user",
-      avatar_url: "https://picsum.photos/300",
+      email: "testuser@test.com",
       name: "Test User",
+      avatar_url: "https://picsum.photos/300",
     };
 
     return request(app)
@@ -276,8 +364,9 @@ describe("POST /api/users", () => {
         expect(responseUser).toMatchObject({
           user_id: expect.any(Number),
           username: "test_user",
-          avatar_url: "https://picsum.photos/300",
+          email: "testuser@test.com",
           name: "Test User",
+          avatar_url: "https://picsum.photos/300",
         });
       });
   });
@@ -285,12 +374,13 @@ describe("POST /api/users", () => {
   test("user is added to the database", () => {
     const newUser = {
       username: "test_user",
-      avatar_url: "https://picsum.photos/300",
+      email: "testuser@test.com",
       name: "Test User",
+      avatar_url: "https://picsum.photos/300",
     };
 
     return request(app)
-      .user("/api/users")
+      .post("/api/users")
       .send(newUser)
       .set("Accept", "application/json")
       .expect(201)
@@ -306,8 +396,9 @@ describe("POST /api/users", () => {
             expect(responseUser).toMatchObject({
               user_id: expect.any(Number),
               username: "test_user",
-              avatar_url: "https://picsum.photos/300",
+              email: "testuser@test.com",
               name: "Test User",
+              avatar_url: "https://picsum.photos/300",
             });
           });
       });
@@ -324,7 +415,7 @@ describe("POST /api/users", () => {
       .set("Accept", "application/json")
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toBe("bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
