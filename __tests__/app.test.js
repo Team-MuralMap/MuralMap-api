@@ -177,30 +177,53 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
       });
   });
   test("can be filtered by user_id", () => {
-    return (
-      request(app)
-        .get("/api/posts?user_id=1")
-        // this could be user_id or user_id, maybe even code both? I guess the column name is user_id
-        .expect(200)
-        .then((response) => {
-          const posts = response.body.posts;
+    return request(app)
+      .get("/api/posts?user_id=1")
+      .expect(200)
+      .then((response) => {
+        const posts = response.body.posts;
 
-          expect(Array.isArray(posts)).toBe(true);
+        expect(Array.isArray(posts)).toBe(true);
 
-          expect(posts.length >= 4).toBe(true);
-          for (const post of posts) {
-            expect(post).toMatchObject({
-              post_id: expect.any(Number),
-              user_id: 1,
-              img_url: expect.any(String),
-              body: expect.any(String),
-              created_at: expect.any(String),
-              site_id: expect.any(Number),
-            });
-          }
-        })
-    );
+        expect(posts.length >= 4).toBe(true);
+        for (const post of posts) {
+          expect(post).toMatchObject({
+            post_id: expect.any(Number),
+            user_id: 1,
+            img_url: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            site_id: expect.any(Number),
+          });
+        }
+      });
   });
+
+  test("can be filtered by most liked and site_id", () => {
+    return request(app)
+      .get("/api/posts?site_id=1&most_liked=true")
+      .expect(200)
+      .then((response) => {
+        const posts = response.body.posts;
+
+        expect(Array.isArray(posts)).toBe(true);
+
+        expect(posts.length >= 2).toBe(false);
+        for (const post of posts) {
+          post.likes_count = Number(post.likes_count); // may need to sort this and turn it into a number
+          expect(post).toMatchObject({
+            post_id: expect.any(Number),
+            user_id: expect.any(Number),
+            img_url: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            site_id: 1,
+            likes_count: expect.any(Number),
+          });
+        }
+      });
+  });
+
   test("ignores invalid column names with 200 response", () => {
     return request(app)
       .get("/api/posts?banana=43")
@@ -235,7 +258,7 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
       .get("/api/posts?site_id=bananas")
       .expect(400)
       .then((response) => {
-        expect(response.res.statusMessage).toBe("Bad request");
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
 });
