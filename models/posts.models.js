@@ -2,7 +2,7 @@ const format = require("pg-format");
 const db = require("../db/connection");
 const { checkIfNum, checkExists } = require("../db/utils/utils");
 
-exports.accessPosts = () => {
+exports.accessPosts = ({}) => {
   return db.query("SELECT * FROM posts").then(({ rows }) => {
     return rows;
   });
@@ -26,16 +26,16 @@ exports.accessPost = (post_id) => {
   }
 };
 
-exports.insertPost = ({ img_url, author_id, body, site_id }) => {
-  if (img_url && body && checkIfNum(author_id) && checkIfNum(site_id)) {
-    return checkExists("users", "user_id", author_id)
+exports.insertPost = ({ img_url, user_id, body, site_id }) => {
+  if (img_url && body && checkIfNum(user_id) && checkIfNum(site_id)) {
+    return checkExists("users", "user_id", user_id)
       .then(() => {
         return checkExists("sites", "site_id", site_id);
       })
       .then(() => {
         queryStr = format(
-          "INSERT INTO posts (img_url, author_id, body, site_id) VALUES (%L) RETURNING *;",
-          [img_url, author_id, body, site_id]
+          "INSERT INTO posts (img_url, user_id, body, site_id) VALUES (%L) RETURNING *;",
+          [img_url, user_id, body, site_id]
         );
         return db.query(queryStr);
       })

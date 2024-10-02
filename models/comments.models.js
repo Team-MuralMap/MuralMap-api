@@ -44,16 +44,16 @@ exports.accessCommentByCommentId = (comment_id) => {
   }
 };
 
-exports.insertCommentByPostId = ({ body, author_id, reply_to }, post_id) => {
-  if (body && checkIfNum(post_id) && checkIfNum(author_id)) {
+exports.insertCommentByPostId = ({ body, user_id, reply_to }, post_id) => {
+  if (body && checkIfNum(post_id) && checkIfNum(user_id)) {
     return checkExists("posts", "post_id", post_id)
       .then(() => {
-        return checkExists("users", "user_id", author_id);
+        return checkExists("users", "user_id", user_id);
       })
       .then(() => {
         queryStr = format(
-          "INSERT INTO comments (body, post_id, author_id, reply_to) VALUES (%L) RETURNING *;",
-          [body, post_id, author_id, reply_to]
+          "INSERT INTO comments (body, post_id, user_id, reply_to) VALUES (%L) RETURNING *;",
+          [body, post_id, user_id, reply_to]
         );
         return db.query(queryStr);
       })

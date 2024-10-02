@@ -7,7 +7,8 @@ const {
 } = require("../models/posts.models");
 
 exports.getPosts = (request, response, next) => {
-  accessPosts()
+  const { query } = request;
+  accessPosts(query)
     .then((postsData) => {
       response.status(200).send({ posts: postsData });
     })
