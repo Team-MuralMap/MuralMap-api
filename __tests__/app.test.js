@@ -90,6 +90,23 @@ describe("GET /api/sites", () => {
         }
       });
   });
+  test("returns an array where each site object has a site_preview_url", () => {
+    return request(app)
+      .get("/api/sites")
+      .expect(200)
+      .then((response) => {
+        const sites = response.body.sites;
+
+        for (const site of sites) {
+          if (site.site_preview_url) {
+            expect(site).toMatchObject({
+              site_preview_url: expect.any(String),
+            });
+          } else expect(site.site_preview_url).toEqual(null);
+        }
+      });
+  });
+  test.todo("site_preview_url is the most popular of the site's photos");
 });
 
 describe("GET /api/sites/:site_id", () => {
@@ -127,6 +144,21 @@ describe("GET /api/sites/:site_id", () => {
         expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
+  test("returns object with a site_preview_url", () => {
+    return request(app)
+      .get("/api/sites/1")
+      .expect(200)
+      .then((response) => {
+        const site = response.body.site;
+
+        if (site.site_preview_url) {
+          expect(site).toMatchObject({
+            site_preview_url: expect.any(String),
+          });
+        } else expect(site.site_preview_url).toEqual(null);
+      });
+  });
+  test.todo("preview_url is the most popular of the site's photos");
 });
 
 describe("GET /api/posts", () => {
