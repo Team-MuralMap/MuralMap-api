@@ -1,4 +1,4 @@
-const dbPool = require("../connection");
+const db = require("../connection");
 const format = require("pg-format");
 
 exports.convertTimestampToDate = ({ created_at, ...otherProperties }) => {
@@ -21,9 +21,9 @@ exports.checkExists = (table, column, value) => {
     value
   );
 
-  return dbPool.query(queryStr).then(({ rows }) => {
+  return db.query(queryStr).then(({ rows }) => {
     if (rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "Resource not found" });
+      return Promise.reject({ status: 404, msg: "Not Found" });
     }
     return true;
   });

@@ -2,10 +2,58 @@ const format = require("pg-format");
 const db = require("../db/connection");
 const { checkIfNum, checkExists } = require("../db/utils/utils");
 
-exports.accessPosts = ({}) => {
-  return db.query("SELECT * FROM posts").then(({ rows }) => {
-    return rows;
-  });
+exports.accessPosts = ({ site_id, user_id, most_liked }) => {
+  let queryStr = format("SELECT * FROM posts");
+  const whereFilters = [];
+  if (most_liked === "true") {
+    queryStr = format(
+      "select posts.img_url, posts.user_id, posts.post_id, posts.created_at, posts.body, posts.site_id, count(posts.post_id) as likes_count from posts left join postlikes on postlikes.post_id = posts.post_id" //group by posts.post_id ORDER BY COUNT(posts.post_id) DESC LIMIT 1;
+    );
+  }
+  return Promise.resolve(() => {})
+    .then(() => {
+      if (site_id) {
+        if (checkIfNum(site_id)) {
+          whereFilters.push(`site_id = ${site_id}`);
+        } else {
+          return Promise.reject({ status: 400, msg: "Bad Request" });
+        }
+      }
+      return true;
+    })
+    .then(() => {
+      if (user_id) {
+        if (checkIfNum(user_id)) {
+          whereFilters.push(`user_id = ${user_id}`);
+        } else {
+          return Promise.reject({ status: 400, msg: "Bad Request" });
+        }
+      }
+      return true;
+    })
+    .then(() => {
+      if (whereFilters.length > 0) {
+        queryStr += format(" WHERE %s", whereFilters[whereFilters.length - 1]);
+        whereFilters.pop();
+        whereFilters.forEach((whereFilter) => {
+          queryStr += format(" AND %s", whereFilter);
+        });
+      }
+      if (most_liked === "true") {
+        queryStr += format(
+          " group by posts.post_id ORDER BY COUNT(posts.post_id) DESC LIMIT 1;"
+        );
+      }
+      //select img_url, posts.user_id, posts.post_id, posts.created_at, posts.body, posts.site_id, count(posts.post_id) as likes_count from posts left join postlikes on postlikes.post_id = posts.post_id group by posts.post_id ORDER BY COUNT(posts.post_id) DESC LIMIT 1;
+
+      return db.query(queryStr);
+    })
+    .then(({ rows }) => {
+      if (rows.length > 0) {
+        return rows;
+      }
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    });
 };
 
 exports.accessPost = (post_id) => {
