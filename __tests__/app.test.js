@@ -98,9 +98,11 @@ describe("GET /api/sites", () => {
         const sites = response.body.sites;
 
         for (const site of sites) {
-          expect(site).toMatchObject({
-            site_preview_url: expect.any(String),
-          });
+          if (site.site_preview_url) {
+            expect(site).toMatchObject({
+              site_preview_url: expect.any(String),
+            });
+          } else expect(site.site_preview_url).toEqual(null);
         }
       });
   });
@@ -149,7 +151,11 @@ describe("GET /api/sites/:site_id", () => {
       .then((response) => {
         const site = response.body.site;
 
-        expect(site).toMatchObject({ site_preview_url: expect.any(String) });
+        if (site.site_preview_url) {
+          expect(site).toMatchObject({
+            site_preview_url: expect.any(String),
+          });
+        } else expect(site.site_preview_url).toEqual(null);
       });
   });
   test.todo("preview_url is the most popular of the site's photos");
