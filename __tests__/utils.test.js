@@ -1,6 +1,10 @@
 const matchers = require("jest-extended");
 expect.extend(matchers);
-const { convertTimestampToDate, checkIfNum } = require("../db/utils/utils");
+const {
+  convertTimestampToDate,
+  checkIfNum,
+  coordinatesToNumbers,
+} = require("../db/utils/utils");
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
@@ -50,5 +54,82 @@ describe("checkIfNum", () => {
   });
   test("passes when provided a number within INT limits", () => {
     expect(checkIfNum(4828)).toBe(true);
+  });
+});
+
+describe("coordinatesToNumbers", () => {
+  test("converts latitude and longitude to numbers", () => {
+    expect(
+      coordinatesToNumbers({ latitude: "50.23", longitude: "-4.87" })
+    ).toEqual({ latitude: 50.23, longitude: -4.87 });
+  });
+  test("ignores other keys and values", () => {
+    expect(
+      coordinatesToNumbers({
+        site_id: 1,
+        author_id: 1,
+        longitude: "21.163367",
+        latitude: "43.961623",
+        randomString: "string",
+      })
+    ).toEqual({
+      site_id: 1,
+      author_id: 1,
+      longitude: 21.163367,
+      latitude: 43.961623,
+      randomString: "string",
+    });
+  });
+  test("returns input if coordinates are already numbers", () => {
+    expect(
+      coordinatesToNumbers({
+        site_id: 1,
+        author_id: 1,
+        longitude: 21.163367,
+        latitude: 43.961623,
+      })
+    ).toEqual({
+      site_id: 1,
+      author_id: 1,
+      longitude: 21.163367,
+      latitude: 43.961623,
+    });
+  });
+  test("returns initial object if keys are missing", () => {
+    expect(
+      coordinatesToNumbers({
+        string: "hello",
+        number: 123,
+      })
+    ).toEqual({
+      string: "hello",
+      number: 123,
+    });
+  });
+  test("input and output have different references", () => {
+    const input = {
+      site_id: 1,
+      author_id: 1,
+      longitude: "21.163367",
+      latitude: "43.961623",
+    };
+    const output = coordinatesToNumbers(input);
+    expect(input).not.toBe(output);
+  });
+  test("input is not mutated", () => {
+    const input = {
+      site_id: 1,
+      author_id: 1,
+      longitude: "21.163367",
+      latitude: "43.961623",
+    };
+    const inputCopy = {
+      site_id: 1,
+      author_id: 1,
+      longitude: "21.163367",
+      latitude: "43.961623",
+    };
+    coordinatesToNumbers(input);
+    expect(input).toEqual(inputCopy);
   });
 });

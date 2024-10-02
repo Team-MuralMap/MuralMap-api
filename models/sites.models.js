@@ -1,10 +1,14 @@
 const format = require("pg-format");
 const db = require("../db/connection");
-const { checkIfNum, checkExists } = require("../db/utils/utils");
+const {
+  checkIfNum,
+  checkExists,
+  coordinatesToNumbers,
+} = require("../db/utils/utils");
 
 exports.accessSites = () => {
   return db.query("SELECT * FROM sites").then(({ rows }) => {
-    return rows;
+    return rows.map(coordinatesToNumbers);
   });
 };
 
@@ -16,7 +20,7 @@ exports.accessSite = (site_id) => {
         return db.query(queryStr);
       })
       .then(({ rows }) => {
-        return rows[0];
+        return coordinatesToNumbers(rows[0]);
       })
       .catch((err) => {
         return Promise.reject(err);
@@ -27,33 +31,31 @@ exports.accessSite = (site_id) => {
 };
 
 exports.insertSite = (site) => {
-  const formattedSite = [
-    site.author_id,
-    site.longitude,
-    site.latitude,
-  ];
+  const formattedSite = [site.author_id, site.longitude, site.latitude];
 
-  const query = format(`
+  const query = format(
+    `
     INSERT INTO sites(author_id, longitude, latitude)
     VALUES(%L)
     RETURNING *`,
     formattedSite
   );
 
-  return db.query(query)
-  .then((result) => {
+  return db.query(query).then((result) => {
     return result.rows[0];
   });
 };
 
 exports.removeSite = (site_id) => {
-  const query = format("DELETE FROM sites WHERE site_id = %L RETURNING *;", site_id);
-  
-  return db.query(query)
-  .then((result) => {
-      if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: 'not found' });
-      }
-      return result.rows[0];
-    });
+  const query = format(
+    "DELETE FROM sites WHERE site_id = %L RETURNING *;",
+    site_id
+  );
+
+  return db.query(query).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    }
+    return result.rows[0];
+  });
 };

@@ -81,8 +81,6 @@ describe("GET /api/sites", () => {
         expect(Array.isArray(sites)).toBe(true);
 
         for (const site of sites) {
-          site.latitude = Number(site.latitude);
-          site.longitude = Number(site.longitude);
           expect(site).toMatchObject({
             site_id: expect.any(Number),
             latitude: expect.any(Number),
@@ -101,8 +99,6 @@ describe("GET /api/sites/:site_id", () => {
       .expect(200)
       .then((response) => {
         const site = response.body.site;
-        site.latitude = Number(site.latitude);
-        site.longitude = Number(site.longitude);
 
         expect(typeof site).toBe("object");
 
@@ -468,8 +464,8 @@ describe("POST /api/sites", () => {
 
             expect(responseSite).toMatchObject({
               site_id: expect.any(Number),
-              latitude: "99999",
-              longitude: "99999",
+              latitude: 99999,
+              longitude: 99999,
               author_id: 1,
             });
           });
