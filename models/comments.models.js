@@ -44,6 +44,27 @@ exports.accessCommentByCommentId = (comment_id) => {
   }
 };
 
+exports.insertCommentByPostId = ({ body, author_id, reply_to }, post_id) => {
+  if (body && checkIfNum(post_id) && checkIfNum(author_id)) {
+    return checkExists("posts", "post_id", post_id)
+      .then(() => {
+        return checkExists("users", "user_id", author_id);
+      })
+      .then(() => {
+        queryStr = format(
+          "INSERT INTO comments (body, post_id, author_id, reply_to) VALUES (%L) RETURNING *;",
+          [body, post_id, author_id, reply_to]
+        );
+        return db.query(queryStr);
+      })
+      .then((result) => {
+        return result.rows[0];
+      });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+};
+
 exports.removeCommentByCommentId = (comment_id) => {
   if (checkIfNum(comment_id)) {
     return checkExists("comments", "comment_id", comment_id)
