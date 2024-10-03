@@ -10,24 +10,31 @@ exports.accessPosts = ({ site_id, user_id, most_liked }) => {
       "select posts.img_url, posts.user_id, posts.post_id, posts.created_at, posts.body, posts.site_id, count(posts.post_id) as likes_count from posts left join postlikes on postlikes.post_id = posts.post_id" //group by posts.post_id ORDER BY COUNT(posts.post_id) DESC LIMIT 1;
     );
   }
+  if (site_id) {
+    if (checkIfNum(site_id)) {
+      whereFilters.push(`posts.site_id = ${site_id}`);
+    } else {
+      return Promise.reject({ status: 400, msg: "Bad Request" });
+    }
+  }
+  if (user_id) {
+    if (checkIfNum(user_id)) {
+      whereFilters.push(`posts.user_id = ${user_id}`);
+    } else {
+      return Promise.reject({ status: 400, msg: "Bad Request" });
+    }
+  }
+
   return Promise.resolve(() => {})
     .then(() => {
       if (site_id) {
-        if (checkIfNum(site_id)) {
-          whereFilters.push(`site_id = ${site_id}`);
-        } else {
-          return Promise.reject({ status: 400, msg: "Bad Request" });
-        }
+        return checkExists("sites", "site_id", site_id);
       }
       return true;
     })
     .then(() => {
       if (user_id) {
-        if (checkIfNum(user_id)) {
-          whereFilters.push(`user_id = ${user_id}`);
-        } else {
-          return Promise.reject({ status: 400, msg: "Bad Request" });
-        }
+        return checkExists("users", "user_id", user_id);
       }
       return true;
     })
@@ -44,14 +51,13 @@ exports.accessPosts = ({ site_id, user_id, most_liked }) => {
           " group by posts.post_id ORDER BY COUNT(posts.post_id) DESC LIMIT 1;"
         );
       }
-
       return db.query(queryStr);
     })
     .then(({ rows }) => {
-      if (rows.length > 0) {
-        return rows;
-      }
-      return Promise.reject({ status: 404, msg: "Not Found" });
+      return rows;
+    })
+    .catch((err) => {
+      return Promise.reject(err);
     });
 };
 
