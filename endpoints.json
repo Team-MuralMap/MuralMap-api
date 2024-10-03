@@ -32,7 +32,7 @@
   },
   "GET /api/posts": {
     "description": "serves an array of all posts",
-    "queries": [],
+    "queries": ["site_id", "user_id", "most_liked (most_liked=true)"],
     "exampleResponse": {
       "posts": [
         {
@@ -101,5 +101,143 @@
         "longitude": "-0.166811"
       }
     }
+  },
+  "GET /api/comments/:comment_id": {
+    "description": "serves a comment according to its id",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 1,
+        "body": "nice",
+        "user_id": 1,
+        "post_id": 1,
+        "created_at": 1605107340000
+      }
+    }
+  },
+  "POST /api/users": {
+    "description": "posts a user object containing username, email, name and avatar_url keys to the users table",
+    "queries": [],
+    "exampleBody": {
+      "username": "test_user",
+      "email": "testuser@test.com",
+      "name": "Test User",
+      "avatar_url": "https://picsum.photos/300"
+    },
+
+    "exampleResponse": {
+      "user": {
+        "user_id": 11,
+        "username": "test_user",
+        "email": "testuser@test.com",
+        "name": "Test User",
+        "avatar_url": "https://picsum.photos/300"
+      }
+    }
+  },
+  "POST /api/posts": {
+    "description": "posts a post object containing user_id, img_url, body and site_id keys to the posts table",
+    "queries": [],
+    "exampleBody": {
+      "user_id": 1,
+      "img_url": "https://picsum.photos/300",
+      "body": "test post",
+      "site_id": 1
+    },
+
+    "exampleResponse": {
+      "post": {
+        "post_id": 11,
+        "user_id": 1,
+        "img_url": "https://picsum.photos/300",
+        "body": "test post",
+        "created_at": "2020-11-11T15:09:00.000Z",
+        "site_id": 1
+      }
+    }
+  },
+  "POST /api/sites": {
+    "description": "posts a site object containing user_id, latitude and longitude keys to the sites table",
+    "queries": [],
+    "exampleBody": {
+      "user_id": 1,
+      "latitude": 9,
+      "longitude": 9
+    },
+
+    "exampleResponse": {
+      "site": [
+        {
+          "site_id": 11,
+          "user_id": 1,
+          "latitude": 9,
+          "longitude": 9
+        }
+      ]
+    }
+  },
+  "POST /api/posts/:post_id/comments": {
+    "description": "posts a comment object containing user_id, body and an optional reply_to key to the comments table",
+    "queries": [],
+    "exampleBody": {
+      "user_id": 1,
+      "body": "test comment",
+      "reply_to": 1
+    },
+
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 11,
+        "user_id": 1,
+        "post_id": 11,
+        "body": "test comment",
+        "created_at": "2020-11-11T15:09:00.000Z",
+        "reply_to": 1
+      }
+    }
+  },
+  "PATCH /api/posts/:post_id": {
+    "description": "updates the body of an existing post",
+    "queries": [],
+    "exampleBody": { "body": "This is an updated body." },
+
+    "exampleResponse": {
+      "post": {
+        "post_id": 11,
+        "user_id": 1,
+        "img_url": "https://picsum.photos/300",
+        "body": "This is an updated body.",
+        "created_at": "2020-11-11T15:09:00.000Z",
+        "site_id": 1
+      }
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates the body of an existing comment",
+    "queries": [],
+    "exampleBody": { "body": "This is an updated body." },
+
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 11,
+        "user_id": 1,
+        "post_id": 6,
+        "body": "This is an updated body.",
+        "created_at": "2020-11-11T15:09:00.000Z",
+        "reply_to": 2
+      }
+    }
+  },
+  "DELETE /api/users/:user_id": {
+    "description": "deletes a user by user_id"
+  },
+  "DELETE /api/sites/:site_id": {
+    "description": "deletes a site by site_id"
+  },
+  "DELETE /api/posts/:post_id": {
+    "description": "deletes a post by post_id"
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment by comment_id"
   }
 }

@@ -44,7 +44,6 @@ exports.accessPosts = ({ site_id, user_id, most_liked }) => {
           " group by posts.post_id ORDER BY COUNT(posts.post_id) DESC LIMIT 1;"
         );
       }
-      //select img_url, posts.user_id, posts.post_id, posts.created_at, posts.body, posts.site_id, count(posts.post_id) as likes_count from posts left join postlikes on postlikes.post_id = posts.post_id group by posts.post_id ORDER BY COUNT(posts.post_id) DESC LIMIT 1;
 
       return db.query(queryStr);
     })
