@@ -26,7 +26,7 @@ module.exports = [
   { // guy at table (Lisbon) - approx
     site_id: 5,
     user_id: 3,
-    longitude: -9133060,
+    longitude: -9.133060,
     latitude: 38.713014,
   },
   { // deer with drink (Saragosse)
