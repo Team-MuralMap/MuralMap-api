@@ -101,6 +101,9 @@ describe("GET /api/sites", () => {
             site_preview_url: expect.toBeOneOf([expect.any(String), null]),
           });
         }
+        expect(sites.find(({ site_id }) => (site_id = 1))).toMatchObject({
+          site_preview_url: expect.any(String),
+        });
       });
   });
   test.todo("site_preview_url is the most popular of the site's photos");
@@ -148,7 +151,7 @@ describe("GET /api/sites/:site_id", () => {
         const site = response.body.site;
 
         expect(site).toMatchObject({
-          site_preview_url: expect.toBeOneOf([expect.any(String), null]),
+          site_preview_url: expect.any(String),
         });
       });
   });

@@ -16,7 +16,7 @@ const partialSiteQuery = `WITH prep_1 AS (
             posts.site_id,
             COUNT(posts.post_id) AS likes_count
         FROM posts
-        RIGHT JOIN postlikes ON posts.post_id = postlikes.post_id
+        LEFT JOIN postlikes ON posts.post_id = postlikes.post_id
         GROUP BY posts.post_id
       )
 
