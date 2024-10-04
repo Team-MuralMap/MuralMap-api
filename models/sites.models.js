@@ -9,13 +9,7 @@ const {
 exports.accessSites = () => {
   return db
     .query(
-      `
-    SELECT
-      sites.*,
-      (ARRAY_AGG(posts.img_url ORDER BY posts.created_at))[1] AS site_preview_url
-    FROM sites LEFT JOIN posts ON sites.site_id = posts.site_id
-    GROUP BY sites.site_id;
-    `
+      "SELECT poptable.img_url, poptable.post_user_id, poptable.post_id, poptable.created_at, poptable.body, poptable.likes_count AS post_likes_count, sites.site_id, sites.latitude, sites.longitude FROM (SELECT a.* FROM (select posts.img_url, posts.user_id AS post_user_id, posts.post_id, posts.created_at, posts.body, posts.site_id, count(posts.post_id) AS likes_count FROM posts RIGHT JOIN postlikes ON postlikes.post_id = posts.post_id GROUP BY posts.post_id) a LEFT OUTER JOIN (select posts.img_url, posts.user_id AS post_user_id, posts.post_id, posts.created_at, posts.body, posts.site_id, count(posts.post_id) AS likes_count FROM posts RIGHT JOIN postlikes ON postlikes.post_id = posts.post_id GROUP BY posts.post_id) b ON a.site_id = b.site_id AND a.likes_count < b.likes_count WHERE b.site_id IS NULL) poptable FULL OUTER JOIN sites ON poptable.site_id = sites.site_id ORDER BY sites.site_id;"
     )
     .then(({ rows }) => {
       return rows.map(coordinatesToNumbers);
@@ -27,13 +21,7 @@ exports.accessSite = (site_id) => {
     return checkExists("sites", "site_id", site_id)
       .then(() => {
         queryStr = format(
-          `SELECT
-            sites.*,
-            (ARRAY_AGG(posts.img_url ORDER BY posts.created_at))[1] AS site_preview_url
-          FROM sites LEFT JOIN posts ON sites.site_id = posts.site_id
-          WHERE sites.site_id = %L
-          GROUP BY sites.site_id;
-          `,
+          "SELECT poptable.img_url, poptable.post_user_id, poptable.post_id, poptable.created_at, poptable.body, poptable.likes_count AS post_likes_count, sites.site_id, sites.latitude, sites.longitude FROM (SELECT a.* FROM (select posts.img_url, posts.user_id AS post_user_id, posts.post_id, posts.created_at, posts.body, posts.site_id, count(posts.post_id) AS likes_count FROM posts RIGHT JOIN postlikes ON postlikes.post_id = posts.post_id GROUP BY posts.post_id) a LEFT OUTER JOIN (select posts.img_url, posts.user_id AS post_user_id, posts.post_id, posts.created_at, posts.body, posts.site_id, count(posts.post_id) AS likes_count FROM posts RIGHT JOIN postlikes ON postlikes.post_id = posts.post_id GROUP BY posts.post_id) b ON a.site_id = b.site_id AND a.likes_count < b.likes_count WHERE b.site_id IS NULL) poptable FULL OUTER JOIN sites ON poptable.site_id = sites.site_id WHERE sites.site_id = %L",
           site_id
         );
         return db.query(queryStr);
