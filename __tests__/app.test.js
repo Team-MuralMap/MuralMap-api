@@ -89,7 +89,7 @@ describe("GET /api/sites", () => {
         }
       });
   });
-  test("returns an array where each site object has a img_url", () => {
+  test("returns an array where each site object has a preview url", () => {
     return request(app)
       .get("/api/sites")
       .expect(200)
@@ -98,7 +98,7 @@ describe("GET /api/sites", () => {
 
         for (const site of sites) {
           expect(site).toMatchObject({
-            img_url: expect.toBeOneOf([expect.any(String), null]),
+            site_preview_url: expect.toBeOneOf([expect.any(String), null]),
           });
         }
       });
@@ -140,7 +140,7 @@ describe("GET /api/sites/:site_id", () => {
         expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
-  test("returns object with a irl_url", () => {
+  test("returns object with a preview url", () => {
     return request(app)
       .get("/api/sites/1")
       .expect(200)
@@ -148,7 +148,7 @@ describe("GET /api/sites/:site_id", () => {
         const site = response.body.site;
 
         expect(site).toMatchObject({
-          img_url: expect.toBeOneOf([expect.any(String), null]),
+          site_preview_url: expect.toBeOneOf([expect.any(String), null]),
         });
       });
   });
