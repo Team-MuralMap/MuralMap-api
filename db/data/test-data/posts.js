@@ -20,7 +20,7 @@ module.exports = [
   {
     img_url:
       "https://media.cnn.com/api/v1/images/stellar/prod/190703180856-01-berlin-wall-eastside-gallery-restricted.jpg?q=w_2000,c_fill/f_webp",
-    user_id: 1,
+    user_id: 2,
     post_id: 3,
     created_at: 1704968832000,
     body: "Berlin vibes",

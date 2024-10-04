@@ -85,12 +85,11 @@ describe("GET /api/sites", () => {
             site_id: expect.any(Number),
             latitude: expect.any(Number),
             longitude: expect.any(Number),
-            user_id: expect.any(Number),
           });
         }
       });
   });
-  test("returns an array where each site object has a site_preview_url", () => {
+  test("returns an array where each site object has a img_url", () => {
     return request(app)
       .get("/api/sites")
       .expect(200)
@@ -98,11 +97,9 @@ describe("GET /api/sites", () => {
         const sites = response.body.sites;
 
         for (const site of sites) {
-          if (site.site_preview_url) {
-            expect(site).toMatchObject({
-              site_preview_url: expect.any(String),
-            });
-          } else expect(site.site_preview_url).toEqual(null);
+          expect(site).toMatchObject({
+            img_url: expect.toBeOneOf([expect.any(String), null]),
+          });
         }
       });
   });
@@ -123,7 +120,6 @@ describe("GET /api/sites/:site_id", () => {
           site_id: 1,
           latitude: expect.any(Number),
           longitude: expect.any(Number),
-          user_id: expect.any(Number),
         });
       });
   });
@@ -144,18 +140,16 @@ describe("GET /api/sites/:site_id", () => {
         expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
-  test("returns object with a site_preview_url", () => {
+  test("returns object with a irl_url", () => {
     return request(app)
       .get("/api/sites/1")
       .expect(200)
       .then((response) => {
         const site = response.body.site;
 
-        if (site.site_preview_url) {
-          expect(site).toMatchObject({
-            site_preview_url: expect.any(String),
-          });
-        } else expect(site.site_preview_url).toEqual(null);
+        expect(site).toMatchObject({
+          img_url: expect.toBeOneOf([expect.any(String), null]),
+        });
       });
   });
   test.todo("preview_url is the most popular of the site's photos");
@@ -217,7 +211,7 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
 
         expect(Array.isArray(posts)).toBe(true);
 
-        expect(posts.length >= 4).toBe(true);
+        expect(posts.length >= 3).toBe(true);
         for (const post of posts) {
           expect(post).toMatchObject({
             post_id: expect.any(Number),
@@ -233,7 +227,7 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
 
   test("can be filtered by most liked and site_id", () => {
     return request(app)
-      .get("/api/posts?site_id=1&most_liked=true")
+      .get("/api/posts?site_id=3&most_liked=true")
       .expect(200)
       .then((response) => {
         const posts = response.body.posts;
@@ -249,7 +243,7 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
             img_url: expect.any(String),
             body: expect.any(String),
             created_at: expect.any(String),
-            site_id: 1,
+            site_id: 3,
             likes_count: expect.any(Number),
           });
         }
@@ -491,7 +485,6 @@ describe("POST /api/sites", () => {
           site_id: expect.any(Number),
           latitude: "99999",
           longitude: "99999",
-          user_id: 1,
         });
       });
   });
@@ -521,7 +514,6 @@ describe("POST /api/sites", () => {
               site_id: expect.any(Number),
               latitude: 99999,
               longitude: 99999,
-              user_id: 1,
             });
           });
       });

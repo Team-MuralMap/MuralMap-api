@@ -34,7 +34,7 @@ exports.coordinatesToNumbers = ({
   longitude: longitudeString,
   ...rest
 }) => {
-  const latitude = latitudeString ? Number(latitudeString) : undefined;
-  const longitude = longitudeString ? Number(longitudeString) : undefined;
+  const latitude = latitudeString ? Number(latitudeString) : null;
+  const longitude = longitudeString ? Number(longitudeString) : null;
   return { latitude, longitude, ...rest };
 };

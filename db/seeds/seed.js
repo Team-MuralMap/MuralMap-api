@@ -161,14 +161,14 @@ const seed = ({
       VALUES %L;`,
         commentLikeData.map(({ user_id, comment_id }) => [user_id, comment_id])
       );
-      db.query(insertLikesQuery);
+      db.query(insertCommentLikesQuery);
 
       const insertVisitsQuery = format(
         `INSERT INTO visits (user_id, post_id)
       VALUES %L;`,
         visitsData.map(({ user_id, post_id }) => [user_id, post_id])
       );
-      db.query(insertLikesQuery);
+      db.query(insertVisitsQuery);
     });
 };
 
