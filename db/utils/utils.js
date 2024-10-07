@@ -34,7 +34,16 @@ exports.coordinatesToNumbers = ({
   longitude: longitudeString,
   ...rest
 }) => {
-  const latitude = latitudeString ? Number(latitudeString) : null;
-  const longitude = longitudeString ? Number(longitudeString) : null;
+  const latitude = latitudeString ? Number(latitudeString) : undefined;
+  const longitude = longitudeString ? Number(longitudeString) : undefined;
   return { latitude, longitude, ...rest };
+};
+
+exports.checkOrder = (order) => {
+  if (order) {
+    if (order.toLowerCase() === "asc") return "ASC";
+    if (order.toLowerCase() === "desc") return "DESC";
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+  return "";
 };
