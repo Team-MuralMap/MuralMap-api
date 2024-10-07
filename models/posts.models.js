@@ -1,15 +1,21 @@
 const format = require("pg-format");
 const db = require("../db/connection");
-const { checkIfNum, checkExists } = require("../db/utils/utils");
+const { checkIfNum, checkExists, checkOrder } = require("../db/utils/utils");
 
-exports.accessPosts = ({ site_id, user_id, most_liked }) => {
-  let queryStr = format("SELECT * FROM posts");
+exports.accessPosts = ({ site_id, user_id, sort_by, order }) => {
+  let queryStr = format(`select posts.*, count(posts.post_id) 
+    as likes_count
+    from posts
+    left join postlikes on posts.post_id = postlikes.post_id`);
   const whereFilters = [];
-  if (most_liked === "true") {
-    queryStr = format(
-      "select posts.img_url, posts.user_id, posts.post_id, posts.created_at, posts.body, posts.site_id, count(posts.post_id) as likes_count from posts left join postlikes on postlikes.post_id = posts.post_id" //group by posts.post_id ORDER BY COUNT(posts.post_id) DESC LIMIT 1;
-    );
-  }
+  const sortGreenList = [
+    "post_id",
+    "user_id",
+    "created_at",
+    "site_id",
+    "likes_count",
+  ];
+
   if (site_id) {
     if (checkIfNum(site_id)) {
       whereFilters.push(`posts.site_id = ${site_id}`);
@@ -46,10 +52,19 @@ exports.accessPosts = ({ site_id, user_id, most_liked }) => {
           queryStr += format(" AND %s", whereFilter);
         });
       }
-      if (most_liked === "true") {
-        queryStr += format(
-          " group by posts.post_id ORDER BY COUNT(posts.post_id) DESC LIMIT 1;"
-        );
+      queryStr += format(" group by posts.post_id");
+      return checkOrder(order);
+    })
+    .then((checkedOrder) => {
+      if (sort_by) {
+        if (sort_by === "likes_count") {
+          queryStr += format(" ORDER BY COUNT(posts.post_id)");
+        } else {
+          if (sortGreenList.includes(sort_by)) {
+            queryStr += format(" ORDER BY %s", sort_by);
+          }
+        }
+        queryStr += format(" %s", checkedOrder);
       }
       return db.query(queryStr);
     })
@@ -65,7 +80,7 @@ exports.accessPost = (post_id) => {
   if (checkIfNum(post_id)) {
     return checkExists("posts", "post_id", post_id)
       .then(() => {
-        queryStr = format("SELECT * FROM posts WHERE post_id = %L;", post_id);
+        queryStr = format("select posts.*, count(posts.post_id) as likes_count from posts left join postlikes on posts.post_id = postlikes.post_id WHERE posts.post_id = %L group by posts.post_id;", post_id);
         return db.query(queryStr);
       })
       .then(({ rows }) => {

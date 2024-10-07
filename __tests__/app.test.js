@@ -227,32 +227,24 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
         }
       });
   });
-
-  test("can be filtered by most liked and site_id", () => {
+  test("can be sorted by post id and ascending order", () => {
     return request(app)
-      .get("/api/posts?site_id=3&most_liked=true")
+      .get("/api/posts?sort_by=post_id&&order=asc")
       .expect(200)
       .then((response) => {
         const posts = response.body.posts;
-
-        expect(Array.isArray(posts)).toBe(true);
-
-        expect(posts.length >= 2).toBe(false);
-        for (const post of posts) {
-          post.likes_count = Number(post.likes_count); // may need to sort this and turn it into a number
-          expect(post).toMatchObject({
-            post_id: expect.any(Number),
-            user_id: expect.any(Number),
-            img_url: expect.any(String),
-            body: expect.any(String),
-            created_at: expect.any(String),
-            site_id: 3,
-            likes_count: expect.any(Number),
-          });
-        }
+        expect(posts).toBeSortedBy("post_id", { descending: false });
       });
   });
-
+  test("can be sorted by likes in descending order", () => {
+    return request(app)
+      .get("/api/posts?sort_by=likes_count&&order=Desc")
+      .expect(200)
+      .then((response) => {
+        const posts = response.body.posts;
+        expect(posts).toBeSortedBy("likes_count", { descending: true });
+      });
+  });
   test("ignores invalid column names with 200 response", () => {
     return request(app)
       .get("/api/posts?banana=43")
@@ -272,6 +264,15 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
             site_id: expect.any(Number),
           });
         }
+      });
+  });
+  test("fails when asc is spelt wrong", () => {
+    return request(app)
+      .get("/api/posts?sort_by=likes_count&&order=acs")
+      .expect(400)
+      .then((response) => {
+        const posts = response.body.posts;
+        expect(response.res.statusMessage).toBe("Bad Request");
       });
   });
   test("returns 404 error message if filtering id does not exist", () => {

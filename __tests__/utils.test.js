@@ -4,6 +4,7 @@ const {
   convertTimestampToDate,
   checkIfNum,
   coordinatesToNumbers,
+  checkOrder,
 } = require("../db/utils/utils");
 
 describe("convertTimestampToDate", () => {
@@ -54,6 +55,23 @@ describe("checkIfNum", () => {
   });
   test("passes when provided a number within INT limits", () => {
     expect(checkIfNum(4828)).toBe(true);
+  });
+});
+
+describe("check order", () => {
+  test("fails when provided a letter", () => {
+    return checkOrder("a").catch((response) => {
+      expect(response.msg).toBe("Bad Request");
+    })
+  });
+  test("returns empty string when fed no order", () => {
+    expect(checkOrder()).toEqual("");
+  });
+  test("returns ASC when fed Asc", () => {
+    expect(checkOrder("Asc")).toEqual("ASC");
+  });
+  test("returns DESC when fed DESC", () => {
+    expect(checkOrder("DESC")).toEqual("DESC");
   });
 });
 
