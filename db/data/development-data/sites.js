@@ -35,4 +35,28 @@ module.exports = [
     longitude: -0.884506,
     latitude: 41.656412,
   },
+  { // colourful woman (Kettering)
+    site_id: 7,
+    user_id: 1,
+    longitude: -0.726970,
+    latitude: 52.398476,
+  },
+  { // Leicester City FC mural (Leicester)
+    site_id: 8,
+    user_id: 1,
+    longitude: -1.138714,
+    latitude: 52.631792,
+  },
+  { // Ian Curtis (Manchester)
+    site_id: 9,
+    user_id: 3,
+    longitude: -2.227158,
+    latitude: 53.476108,
+  },
+  { // Alan Turing (Manchester)
+    site_id: 10,
+    user_id: 4,
+    longitude: -2.254513,
+    latitude: 53.425249,
+  },
 ];
