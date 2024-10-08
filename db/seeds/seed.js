@@ -12,8 +12,8 @@ const seed = ({
   visitsData,
 }) => {
   return db
-    .query(`DROP TABLE IF EXISTS commentLikes;`)
-    .then(() => db.query(`DROP TABLE IF EXISTS postLikes;`))
+    .query(`DROP TABLE IF EXISTS commentlikes;`)
+    .then(() => db.query(`DROP TABLE IF EXISTS postlikes;`))
     .then(() => db.query(`DROP TABLE IF EXISTS visits;`))
     .then(() => db.query(`DROP TABLE IF EXISTS comments;`))
     .then(() => db.query(`DROP TABLE IF EXISTS posts;`))
@@ -65,7 +65,7 @@ const seed = ({
     )
     .then(() => {
       const postLikesTablePromise = db.query(`
-        CREATE TABLE postLikes (
+        CREATE TABLE postlikes (
           like_id SERIAL PRIMARY KEY,
           post_id INT REFERENCES posts (post_id) ON DELETE CASCADE,
           user_id INT REFERENCES users (user_id) ON DELETE CASCADE
@@ -77,7 +77,7 @@ const seed = ({
           user_id INT REFERENCES users (user_id) ON DELETE CASCADE
         );`);
       const commentLikesTablePromise = db.query(`
-        CREATE TABLE commentLikes (
+        CREATE TABLE commentlikes (
           comment_like_id SERIAL PRIMARY KEY,
           comment_id INT REFERENCES comments (comment_id) ON DELETE CASCADE,
           user_id INT REFERENCES users (user_id) ON DELETE CASCADE
@@ -147,28 +147,29 @@ const seed = ({
       );
       return db.query(insertCommentQuery);
     })
-
     .then(() => {
       const insertLikesQuery = format(
-        `INSERT INTO postLikes (user_id, post_id)
+        `INSERT INTO postlikes (user_id, post_id)
       VALUES %L;`,
         postLikeData.map(({ user_id, post_id }) => [user_id, post_id])
       );
-      db.query(insertLikesQuery);
-
+      return db.query(insertLikesQuery);
+    })
+    .then(() => {
       const insertCommentLikesQuery = format(
-        `INSERT INTO commentLikes (user_id, comment_id)
+        `INSERT INTO commentlikes (user_id, comment_id)
       VALUES %L;`,
         commentLikeData.map(({ user_id, comment_id }) => [user_id, comment_id])
       );
-      db.query(insertCommentLikesQuery);
-
+      return db.query(insertCommentLikesQuery);
+    })
+    .then(() => {
       const insertVisitsQuery = format(
         `INSERT INTO visits (user_id, post_id)
       VALUES %L;`,
         visitsData.map(({ user_id, post_id }) => [user_id, post_id])
       );
-      db.query(insertVisitsQuery);
+      return db.query(insertVisitsQuery);
     });
 };
 

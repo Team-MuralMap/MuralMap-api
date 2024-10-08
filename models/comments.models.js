@@ -7,7 +7,13 @@ exports.accessCommentsByPostId = (post_id) => {
     return checkExists("comments", "post_id", post_id)
       .then(() => {
         queryStr = format(
-          "SELECT * FROM comments WHERE post_id = %L;",
+          `select
+    comments.*,
+    count(commentlikes.comment_like_id) as likes_count
+from comments
+left join commentlikes
+    on comments.comment_id = commentlikes.comment_id 
+    WHERE comments.post_id = %L group by comments.comment_id;`,
           post_id
         );
         return db.query(queryStr);

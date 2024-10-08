@@ -3,10 +3,12 @@ const db = require("../db/connection");
 const { checkIfNum, checkExists, checkOrder } = require("../db/utils/utils");
 
 exports.accessPosts = ({ site_id, user_id, sort_by, order }) => {
-  let queryStr = format(`select posts.*, count(posts.post_id) 
-    as likes_count
-    from posts
-    left join postlikes on posts.post_id = postlikes.post_id`);
+  let queryStr = format(`select
+    posts.*,
+    count(postlikes.like_id) as likes_count
+from posts
+left join postlikes
+    on posts.post_id = postlikes.post_id`);
   const whereFilters = [];
   const sortGreenList = [
     "post_id",
@@ -56,14 +58,8 @@ exports.accessPosts = ({ site_id, user_id, sort_by, order }) => {
       return checkOrder(order);
     })
     .then((checkedOrder) => {
-      if (sort_by) {
-        if (sort_by === "likes_count") {
-          queryStr += format(" ORDER BY COUNT(posts.post_id)");
-        } else {
-          if (sortGreenList.includes(sort_by)) {
-            queryStr += format(" ORDER BY %s", sort_by);
-          }
-        }
+      if (sort_by && sortGreenList.includes(sort_by)) {
+        queryStr += format(" ORDER BY %s", sort_by);
         queryStr += format(" %s", checkedOrder);
       }
       return db.query(queryStr);
@@ -80,7 +76,16 @@ exports.accessPost = (post_id) => {
   if (checkIfNum(post_id)) {
     return checkExists("posts", "post_id", post_id)
       .then(() => {
-        queryStr = format("select posts.*, count(posts.post_id) as likes_count from posts left join postlikes on posts.post_id = postlikes.post_id WHERE posts.post_id = %L group by posts.post_id;", post_id);
+        queryStr = format(
+          `select
+    posts.*,
+    count(postlikes.like_id) as likes_count
+from posts
+left join postlikes
+    on posts.post_id = postlikes.post_id 
+    WHERE posts.post_id = %L group by posts.post_id;`,
+          post_id
+        );
         return db.query(queryStr);
       })
       .then(({ rows }) => {
