@@ -124,6 +124,52 @@ exports.accessCommentlikeByUserAndComment = (user_id, comment_id) => {
   }
 };
 
+exports.accessVisitsByUser = (user_id) => {
+  if (checkIfNum(user_id)) {
+    return checkExists("users", "user_id", user_id)
+      .then(() => {
+        queryStr = format("SELECT * FROM visits WHERE user_id = %L;", user_id);
+        return db.query(queryStr);
+      })
+      .then(({ rows }) => {
+        return rows;
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+};
+
+exports.accessVisitByUserAndPost = (user_id, post_id) => {
+  if (checkIfNum(user_id) && checkIfNum(post_id)) {
+    return checkExists("users", "user_id", user_id)
+      .then(() => {
+        return checkExists("posts", "post_id", post_id);
+      })
+      .then(() => {
+        queryStr = format(
+          "SELECT * FROM visits WHERE user_id = %L AND post_id = %L;",
+          user_id,
+          post_id
+        );
+        return db.query(queryStr);
+      })
+      .then(({ rows }) => {
+        if (rows.length === 0) {
+          return Promise.reject({ status: 404, msg: "Not Found" });
+        }
+        return rows[0];
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+};
+
 exports.insertPostlikeByUserAndPost = (user_id, post_id) => {
   if (checkIfNum(user_id) && checkIfNum(post_id)) {
     return checkExists("users", "user_id", user_id)
@@ -162,6 +208,32 @@ exports.insertCommentlikeByUserAndComment = (user_id, comment_id) => {
     VALUES(%L)
     RETURNING *`,
           [user_id, comment_id]
+        );
+        return db.query(queryStr);
+      })
+      .then(({ rows }) => {
+        return rows[0];
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+};
+
+exports.insertVisitByUserAndPost = (user_id, post_id) => {
+  if (checkIfNum(user_id) && checkIfNum(post_id)) {
+    return checkExists("users", "user_id", user_id)
+      .then(() => {
+        return checkExists("posts", "post_id", post_id);
+      })
+      .then(() => {
+        queryStr = format(
+          ` INSERT INTO visits(user_id, post_id)
+    VALUES(%L)
+    RETURNING *`,
+          [user_id, post_id]
         );
         return db.query(queryStr);
       })
@@ -247,6 +319,35 @@ exports.removeCommentlikeByUserAndComment = (user_id, comment_id) => {
     RETURNING *`,
           user_id,
           comment_id
+        );
+        return db.query(queryStr);
+      })
+      .then(({ rows }) => {
+        if (rows.length === 0) {
+          return Promise.reject({ status: 404, msg: "Not Found" });
+        }
+        return rows[0];
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      });
+  } else {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+};
+
+exports.removeVisitByUserAndPost = (user_id, post_id) => {
+  if (checkIfNum(user_id) && checkIfNum(post_id)) {
+    return checkExists("users", "user_id", user_id)
+      .then(() => {
+        return checkExists("posts", "post_id", post_id);
+      })
+      .then(() => {
+        queryStr = format(
+          ` DELETE FROM visits WHERE user_id = %L AND post_id = %L
+    RETURNING *`,
+          user_id,
+          post_id
         );
         return db.query(queryStr);
       })

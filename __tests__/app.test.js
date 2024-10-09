@@ -252,6 +252,97 @@ describe("GET /api/users/:user_id/commentlikes/:comment_id", () => {
   });
 });
 
+describe("GET /api/users/:user_id/visits", () => {
+  test("returns array of visits given a user", () => {
+    return request(app)
+      .get("/api/users/1/visits")
+      .expect(200)
+      .then((response) => {
+        const visits = response.body.visits;
+
+        expect(Array.isArray(visits)).toBe(true);
+        for (const visit of visits) {
+          expect(visit).toMatchObject({
+            visit_id: expect.any(Number),
+            post_id: expect.any(Number),
+            user_id: 1,
+          });
+        }
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .get("/api/users/12345/visits")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/users/hello/visits")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/users/:user_id/visits/:post_id", () => {
+  test("returns a visits id given a user and post id", () => {
+    return request(app)
+      .get("/api/users/1/visits/1")
+      .expect(200)
+      .then((response) => {
+        const visit = response.body.visit;
+
+        expect(visit).toMatchObject({
+          visit_id: expect.any(Number),
+          post_id: 1,
+          user_id: 1,
+        });
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .get("/api/users/12345/visits/1")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/users/hello/visits/1")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+
+  test("returns 404 error message if post ID does not exist", () => {
+    return request(app)
+      .get("/api/users/1/visits/99481")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if post ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/users/1/visits/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
 describe("GET /api/sites", () => {
   test("returns array of site objects with correct properties", () => {
     return request(app)
@@ -801,6 +892,81 @@ describe("POST /api/users/:user_id/commentlikes/:comment_id", () => {
   });
 });
 
+describe("POST /api/users/:user_id/visits/:post_id", () => {
+  test("returns a new visit object given a user and post id", () => {
+    return request(app)
+      .post("/api/users/2/visits/1")
+      .expect(201)
+      .then((response) => {
+        const visit = response.body.visit;
+
+        expect(visit).toMatchObject({
+          visit_id: expect.any(Number),
+          post_id: 1,
+          user_id: 2,
+        });
+      });
+  });
+
+  test("visit is added to the database", () => {
+    return request(app)
+      .post("/api/users/2/visits/1")
+      .expect(201)
+      .then((response) => {
+        const visitID = response.body.visit.visit_id;
+
+        return request(app)
+          .get(`/api/users/2/visits/1`)
+          .expect(200)
+          .then((response) => {
+            const visit = response.body.visit;
+
+            expect(visit).toMatchObject({
+              visit_id: visitID,
+              user_id: 2,
+              post_id: 1,
+            });
+          });
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .post("/api/users/12345/visits/1")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .post("/api/users/hello/visits/1")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+
+  test("returns 404 error message if post ID does not exist", () => {
+    return request(app)
+      .post("/api/users/1/visits/99481")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if post ID is incorrectly formatted", () => {
+    return request(app)
+      .post("/api/users/1/visits/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
 describe("POST /api/sites", () => {
   test("returns newly added site object with correct properties", () => {
     const newSite = {
@@ -1149,6 +1315,85 @@ describe("DELETE /api/users/:user_id/postlikes/:post_id", () => {
   test("returns 400 error message if post ID is incorrectly formatted", () => {
     return request(app)
       .delete("/api/users/1/postlikes/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
+describe("DELETE /api/users/:user_id/visits/:post_id", () => {
+  test("responds with 204 and no content", () => {
+    return request(app)
+      .delete("/api/users/1/visits/1")
+      .expect(204)
+      .then((response) => {
+        expect(response.body).toEqual({});
+      });
+  });
+
+  test("deletes visit from visits table", () => {
+    return request(app)
+      .get("/api/users/1/visits/1")
+      .expect(200)
+      .then((response) => {
+        const visit = response.body.visit;
+
+        expect(visit).toMatchObject({
+          visit_id: expect.any(Number),
+          post_id: 1,
+          user_id: 1,
+        });
+      })
+      .then(() => {
+        return request(app)
+          .delete("/api/users/1/visits/1")
+          .expect(204)
+          .then(() => {
+            return request(app).get("/api/users/1/visits/4").expect(404);
+          });
+      });
+  });
+
+  test("returns 404 error message if visit does not exist", () => {
+    return request(app)
+      .delete("/api/users/1/visits/2")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .delete("/api/users/12345/visits/1")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .delete("/api/users/hello/visits/1")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+
+  test("returns 404 error message if post ID does not exist", () => {
+    return request(app)
+      .delete("/api/users/1/visits/99481")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if post ID is incorrectly formatted", () => {
+    return request(app)
+      .delete("/api/users/1/visits/hello")
       .expect(400)
       .then((response) => {
         expect(response.res.statusMessage).toBe("Bad Request");

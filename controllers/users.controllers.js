@@ -12,6 +12,10 @@ const {
   insertCommentlikeByUserAndComment,
   removePostlikeByUserAndPost,
   removeCommentlikeByUserAndComment,
+  accessVisitsByUser,
+  accessVisitByUserAndPost,
+  insertVisitByUserAndPost,
+  removeVisitByUserAndPost,
 } = require("../models/users.models");
 
 exports.getUsers = (request, response, next) => {
@@ -77,6 +81,28 @@ exports.getCommentlikeByUserIdAndCommentId = (request, response, next) => {
     });
 };
 
+exports.getVisitsByUserId = (request, response, next) => {
+  const { params } = request;
+  accessVisitsByUser(params.user_id)
+    .then((visitsData) => {
+      response.status(200).send({ visits: visitsData });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getVisitByUserIdAndPostId = (request, response, next) => {
+  const { params } = request;
+  accessVisitByUserAndPost(params.user_id, params.post_id)
+    .then((visitData) => {
+      response.status(200).send({ visit: visitData });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 exports.postPostlikeByUserIdAndPostId = (request, response, next) => {
   const { params } = request;
   insertPostlikeByUserAndPost(params.user_id, params.post_id)
@@ -93,6 +119,17 @@ exports.postCommentlikeByUserIdAndCommentId = (request, response, next) => {
   insertCommentlikeByUserAndComment(params.user_id, params.comment_id)
     .then((likeData) => {
       response.status(201).send({ like: likeData });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postVisitByUserIdAndPostId = (request, response, next) => {
+  const { params } = request;
+  insertVisitByUserAndPost(params.user_id, params.post_id)
+    .then((visitData) => {
+      response.status(201).send({ visit: visitData });
     })
     .catch((err) => {
       next(err);
@@ -136,6 +173,17 @@ exports.deletePostlikeByUserIdAndPostId = (request, response, next) => {
 exports.deleteCommentlikeByUserIdAndCommentId = (request, response, next) => {
   const { params } = request;
   removeCommentlikeByUserAndComment(params.user_id, params.comment_id)
+    .then(() => {
+      response.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteVisitByUserIdAndPostId = (request, response, next) => {
+  const { params } = request;
+  removeVisitByUserAndPost(params.user_id, params.post_id)
     .then(() => {
       response.status(204).send();
     })
