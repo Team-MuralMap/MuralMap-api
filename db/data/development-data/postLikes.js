@@ -19,6 +19,8 @@ module.exports = [
   { user_id: 4, post_id: 13 },
   { user_id: 4, post_id: 14 },
   { user_id: 4, post_id: 15 },
+  { user_id: 1, post_id: 15 },
+  { user_id: 2, post_id: 15 },
   { user_id: 1, post_id: 6 },
   { user_id: 1, post_id: 16 },
   { user_id: 1, post_id: 17 },
