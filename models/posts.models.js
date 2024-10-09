@@ -3,12 +3,32 @@ const db = require("../db/connection");
 const { checkIfNum, checkExists, checkOrder } = require("../db/utils/utils");
 
 exports.accessPosts = ({ site_id, user_id, sort_by, order }) => {
-  let queryStr = format(`select
-    posts.*,
-    count(postlikes.like_id) as likes_count
-from posts
-left join postlikes
-    on posts.post_id = postlikes.post_id`);
+  let queryStr = format(`with prep_1 as (
+    select
+        posts.*,
+        count(postlikes.like_id) as likes_count
+    from posts
+    left join postlikes
+        on posts.post_id = postlikes.post_id
+    group by posts.post_id
+),
+
+prep_2 as (
+    select
+        posts.post_id,
+        count(visits.visit_id) as visits_count
+    from posts
+    left join visits
+        on posts.post_id = visits.post_id
+    group by posts.post_id
+)
+
+select
+    prep_1.*,
+    prep_2.visits_count
+from prep_1
+left join prep_2
+    on prep_1.post_id = prep_2.post_id`);
   const whereFilters = [];
   const sortGreenList = [
     "post_id",
@@ -20,14 +40,14 @@ left join postlikes
 
   if (site_id) {
     if (checkIfNum(site_id)) {
-      whereFilters.push(`posts.site_id = ${site_id}`);
+      whereFilters.push(`prep_1.site_id = ${site_id}`);
     } else {
       return Promise.reject({ status: 400, msg: "Bad Request" });
     }
   }
   if (user_id) {
     if (checkIfNum(user_id)) {
-      whereFilters.push(`posts.user_id = ${user_id}`);
+      whereFilters.push(`prep_1.user_id = ${user_id}`);
     } else {
       return Promise.reject({ status: 400, msg: "Bad Request" });
     }
@@ -54,7 +74,6 @@ left join postlikes
           queryStr += format(" AND %s", whereFilter);
         });
       }
-      queryStr += format(" group by posts.post_id");
       return checkOrder(order);
     })
     .then((checkedOrder) => {
@@ -77,13 +96,34 @@ exports.accessPost = (post_id) => {
     return checkExists("posts", "post_id", post_id)
       .then(() => {
         queryStr = format(
-          `select
-    posts.*,
-    count(postlikes.like_id) as likes_count
-from posts
-left join postlikes
-    on posts.post_id = postlikes.post_id 
-    WHERE posts.post_id = %L group by posts.post_id;`,
+          `
+with prep_1 as (
+    select
+        posts.*,
+        count(postlikes.like_id) as likes_count
+    from posts
+    left join postlikes
+        on posts.post_id = postlikes.post_id
+    group by posts.post_id
+),
+
+prep_2 as (
+    select
+        posts.post_id,
+        count(visits.visit_id) as visits_count
+    from posts
+    left join visits
+        on posts.post_id = visits.post_id
+    group by posts.post_id
+)
+
+select
+    prep_1.*,
+    prep_2.visits_count
+from prep_1
+left join prep_2
+    on prep_1.post_id = prep_2.post_id
+    WHERE prep_1.post_id = %L;`,
           post_id
         );
         return db.query(queryStr);

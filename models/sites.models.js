@@ -6,41 +6,46 @@ const {
   coordinatesToNumbers,
 } = require("../db/utils/utils");
 
-const partialSiteQuery = `WITH prep_1 AS (
-        SELECT
-            posts.img_url,
-            posts.user_id AS post_user_id,
-            posts.post_id,
-            posts.created_at,
-            posts.body,
-            posts.site_id,
-            COUNT(posts.post_id) AS likes_count
-        FROM posts
-        LEFT JOIN postlikes ON posts.post_id = postlikes.post_id
-        GROUP BY posts.post_id
-      )
+const partialSiteQuery = `with prep_3 as (
+    select
+        posts.site_id,
+        COUNT(distinct visits.user_id) as visits_count
+    from visits
+    left join posts
+        on visits.post_id = posts.post_id
+    group by posts.site_id
+)
 
-      SELECT
+select
+    prep_2.*,
+    COALESCE(prep_3.visits_count, 0) as visits_count
+from (
+    with prep_1 as (
+        select
+            posts.*,
+            COUNT(posts.post_id) as likes_count
+        from posts
+        left join postlikes on posts.post_id = postlikes.post_id
+        group by posts.post_id
+    )
+
+    select
         sites.*,
-        (ARRAY_AGG(prep_1.img_url ORDER BY prep_1.likes_count DESC))[
+        (ARRAY_AGG(prep_1.img_url order by prep_1.likes_count desc))[
             1
-        ] AS site_preview_url,
-        (ARRAY_AGG(prep_1.post_id ORDER BY prep_1.likes_count DESC))[
+        ] as site_preview_url,
+        (ARRAY_AGG(prep_1.post_id order by prep_1.likes_count desc))[
             1
-        ] AS post_id
-      FROM sites LEFT JOIN prep_1 ON sites.site_id = prep_1.site_id
-      `;
+        ] as post_id
+    from sites left join prep_1 on sites.site_id = prep_1.site_id
+    group by sites.site_id
+) as prep_2 left join prep_3
+    on prep_2.site_id = prep_3.site_id  `;
 
 exports.accessSites = () => {
-  return db
-    .query(
-      partialSiteQuery +
-        `
-      GROUP BY sites.site_id;`
-    )
-    .then(({ rows }) => {
-      return rows.map(coordinatesToNumbers);
-    });
+  return db.query(partialSiteQuery).then(({ rows }) => {
+    return rows.map(coordinatesToNumbers);
+  });
 };
 
 exports.accessSite = (site_id) => {
@@ -50,8 +55,8 @@ exports.accessSite = (site_id) => {
         queryStr = format(
           partialSiteQuery +
             `
-          WHERE sites.site_id = %L
-          GROUP BY sites.site_id`,
+          WHERE prep_2.site_id = %L
+        `,
           site_id
         );
         return db.query(queryStr);
