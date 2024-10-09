@@ -70,6 +70,188 @@ describe("GET /api/users/:user_id", () => {
   });
 });
 
+describe("GET /api/users/:user_id/postlikes", () => {
+  test("returns array of postlike ids given a user", () => {
+    return request(app)
+      .get("/api/users/1/postlikes")
+      .expect(200)
+      .then((response) => {
+        const likes = response.body.likes;
+
+        expect(Array.isArray(likes)).toBe(true);
+        for (const like of likes) {
+          expect(like).toMatchObject({
+            like_id: expect.any(Number),
+            post_id: expect.any(Number),
+            user_id: 1,
+          });
+        }
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .get("/api/users/12345/postlikes")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if given ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/users/hello/postlikes")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/users/:user_id/postlikes/:post_id", () => {
+  test("returns a postlike id given a user and post id", () => {
+    return request(app)
+      .get("/api/users/1/postlikes/4")
+      .expect(200)
+      .then((response) => {
+        const like = response.body.like;
+
+        expect(like).toMatchObject({
+          like_id: expect.any(Number),
+          post_id: 4,
+          user_id: 1,
+        });
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .get("/api/users/12345/postlikes/1")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/users/hello/postlikes/1")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+
+  test("returns 404 error message if post ID does not exist", () => {
+    return request(app)
+      .get("/api/users/1/postlikes/99481")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if post ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/users/1/postlikes/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/users/:user_id/commentlikes", () => {
+  test("returns array of commentlike ids given a user", () => {
+    return request(app)
+      .get("/api/users/1/commentlikes")
+      .expect(200)
+      .then((response) => {
+        const likes = response.body.likes;
+
+        expect(Array.isArray(likes)).toBe(true);
+        for (const like of likes) {
+          expect(like).toMatchObject({
+            comment_like_id: expect.any(Number),
+            comment_id: expect.any(Number),
+            user_id: 1,
+          });
+        }
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .get("/api/users/12345/commentlikes")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/users/hello/commentlikes")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/users/:user_id/commentlikes/:comment_id", () => {
+  test("returns a commentlike id given a user and comment id ", () => {
+    return request(app)
+      .get("/api/users/1/commentlikes/1")
+      .expect(200)
+      .then((response) => {
+        const like = response.body.like;
+
+        expect(like).toMatchObject({
+          comment_like_id: expect.any(Number),
+          comment_id: 1,
+          user_id: 1,
+        });
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .get("/api/users/12345/commentlikes/1")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/users/hello/commentlikes/1")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+
+  test("returns 404 error message if comment ID does not exist", () => {
+    return request(app)
+      .get("/api/users/1/commentlikes/99481")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if comment ID is incorrectly formatted", () => {
+    return request(app)
+      .get("/api/users/1/commentlikes/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
 describe("GET /api/sites", () => {
   test("returns array of site objects with correct properties", () => {
     return request(app)
@@ -469,6 +651,156 @@ describe("POST /api/users", () => {
   });
 });
 
+describe("POST /api/users/:user_id/postlikes/:post_id", () => {
+  test("returns a new postlike object given a user and post id", () => {
+    return request(app)
+      .post("/api/users/2/postlikes/1")
+      .expect(201)
+      .then((response) => {
+        const like = response.body.like;
+
+        expect(like).toMatchObject({
+          like_id: expect.any(Number),
+          post_id: 1,
+          user_id: 2,
+        });
+      });
+  });
+
+  test("like is added to the database", () => {
+    return request(app)
+      .post("/api/users/2/postlikes/1")
+      .expect(201)
+      .then((response) => {
+        const likeID = response.body.like.like_id;
+
+        return request(app)
+          .get(`/api/users/2/postlikes/1`)
+          .expect(200)
+          .then((response) => {
+            const like = response.body.like;
+
+            expect(like).toMatchObject({
+              like_id: likeID,
+              user_id: 2,
+              post_id: 1,
+            });
+          });
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .post("/api/users/12345/postlikes/1")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .post("/api/users/hello/postlikes/1")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+
+  test("returns 404 error message if post ID does not exist", () => {
+    return request(app)
+      .post("/api/users/1/postlikes/99481")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if post ID is incorrectly formatted", () => {
+    return request(app)
+      .post("/api/users/1/postlikes/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
+describe("POST /api/users/:user_id/commentlikes/:comment_id", () => {
+  test("returns a new commentlike object given a user and comment id", () => {
+    return request(app)
+      .post("/api/users/2/commentlikes/1")
+      .expect(201)
+      .then((response) => {
+        const like = response.body.like;
+
+        expect(like).toMatchObject({
+          comment_like_id: expect.any(Number),
+          comment_id: 1,
+          user_id: 2,
+        });
+      });
+  });
+
+  test("like is added to the database", () => {
+    return request(app)
+      .post("/api/users/2/commentlikes/1")
+      .expect(201)
+      .then((response) => {
+        const likeID = response.body.like.comment_like_id;
+
+        return request(app)
+          .get(`/api/users/2/commentlikes/1`)
+          .expect(200)
+          .then((response) => {
+            const like = response.body.like;
+
+            expect(like).toMatchObject({
+              comment_like_id: likeID,
+              user_id: 2,
+              comment_id: 1,
+            });
+          });
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .post("/api/users/12345/commentlikes/1")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .post("/api/users/hello/commentlikes/1")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+
+  test("returns 404 error message if comment ID does not exist", () => {
+    return request(app)
+      .post("/api/users/1/commentlikes/99481")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if comment ID is incorrectly formatted", () => {
+    return request(app)
+      .post("/api/users/1/commentlikes/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
 describe("POST /api/sites", () => {
   test("returns newly added site object with correct properties", () => {
     const newSite = {
@@ -738,6 +1070,164 @@ describe("DELETE /api/users/:user_id", () => {
   test("returns 400 error message if given ID is incorrectly formatted", () => {
     return request(app)
       .get("/api/users/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
+describe("DELETE /api/users/:user_id/postlikes/:post_id", () => {
+  test("responds with 204 and no content", () => {
+    return request(app)
+      .delete("/api/users/1/postlikes/4")
+      .expect(204)
+      .then((response) => {
+        expect(response.body).toEqual({});
+      });
+  });
+
+  test("deletes postlike from postLikes table", () => {
+    return request(app)
+      .get("/api/users/1/postlikes/4")
+      .expect(200)
+      .then((response) => {
+        const like = response.body.like;
+
+        expect(like).toMatchObject({
+          like_id: expect.any(Number),
+          post_id: 4,
+          user_id: 1,
+        });
+      })
+      .then(() => {
+        return request(app)
+          .delete("/api/users/1/postlikes/4")
+          .expect(204)
+          .then(() => {
+            return request(app).get("/api/users/1/postlikes/4").expect(404);
+          });
+      });
+  });
+
+  test("returns 404 error message if postlike does not exist", () => {
+    return request(app)
+      .delete("/api/users/1/postlikes/2")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .delete("/api/users/12345/postlikes/1")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .delete("/api/users/hello/postlikes/1")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+
+  test("returns 404 error message if post ID does not exist", () => {
+    return request(app)
+      .delete("/api/users/1/postlikes/99481")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if post ID is incorrectly formatted", () => {
+    return request(app)
+      .delete("/api/users/1/postlikes/hello")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+});
+
+describe("DELETE /api/users/:user_id/commentlikes/:comment_id", () => {
+  test("responds with 204 and no content", () => {
+    return request(app)
+      .delete("/api/users/1/commentlikes/1")
+      .expect(204)
+      .then((response) => {
+        expect(response.body).toEqual({});
+      });
+  });
+
+  test("deletes commentlike from commentLikes table", () => {
+    return request(app)
+      .get("/api/users/1/commentlikes/1")
+      .expect(200)
+      .then((response) => {
+        const like = response.body.like;
+
+        expect(like).toMatchObject({
+          comment_like_id: expect.any(Number),
+          comment_id: 1,
+          user_id: 1,
+        });
+      })
+      .then(() => {
+        return request(app)
+          .delete("/api/users/1/commentlikes/1")
+          .expect(204)
+          .then(() => {
+            return request(app).get("/api/users/1/commentlikes/1").expect(404);
+          });
+      });
+  });
+
+  test("returns 404 error message if commentlike does not exist", () => {
+    return request(app)
+      .delete("/api/users/1/commentlikes/3")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 404 error message if user ID does not exist", () => {
+    return request(app)
+      .delete("/api/users/12345/commentlikes/1")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if user ID is incorrectly formatted", () => {
+    return request(app)
+      .delete("/api/users/hello/commentlikes/1")
+      .expect(400)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Bad Request");
+      });
+  });
+
+  test("returns 404 error message if comment ID does not exist", () => {
+    return request(app)
+      .delete("/api/users/1/commentlikes/99481")
+      .expect(404)
+      .then((response) => {
+        expect(response.res.statusMessage).toBe("Not Found");
+      });
+  });
+
+  test("returns 400 error message if comment ID is incorrectly formatted", () => {
+    return request(app)
+      .delete("/api/users/1/commentlikes/hello")
       .expect(400)
       .then((response) => {
         expect(response.res.statusMessage).toBe("Bad Request");

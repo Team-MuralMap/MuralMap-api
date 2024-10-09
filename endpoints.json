@@ -30,6 +30,40 @@
       }
     }
   },
+  "GET /api/users/:user_id/postlikes": {
+    "description": "serves an array of post likes according to their user id",
+    "queries": [],
+    "exampleResponse": {
+      "likes": [
+        { "like_id": 1, "post_id": 1, "user_id": 1 },
+        { "like_id": 5, "post_id": 4, "user_id": 1 }
+      ]
+    }
+  },
+  "GET /api/users/:user_id/postlikes/:post_id": {
+    "description": "serves an array of post likes according to their user id",
+    "queries": [],
+    "exampleResponse": {
+      "likes": { "like_id": 5, "post_id": 4, "user_id": 1 }
+    }
+  },
+  "GET /api/users/:user_id/commentlikes": {
+    "description": "serves an array of comment likes according to their user id",
+    "queries": [],
+    "exampleResponse": {
+      "likes": [
+        { "comment_like_id": 1, "comment_id": 1, "user_id": 1 },
+        { "comment_like_id": 5, "comment_id": 4, "user_id": 1 }
+      ]
+    }
+  },
+  "GET /api/users/:user_id/commentlikes/:comment_id": {
+    "description": "serves an array of comment likes according to their user id",
+    "queries": [],
+    "exampleResponse": {
+      "likes": { "comment_like_id": 5, "comment_id": 4, "user_id": 1 }
+    }
+  },
   "GET /api/posts": {
     "description": "serves an array of all posts",
     "queries": ["site_id", "user_id", "sort_by", "order"],
@@ -141,6 +175,32 @@
       }
     }
   },
+  "POST /api/users/:user_id/postlikes/:post_id": {
+    "description": "posts a postlike according to user id",
+    "queries": [],
+    "exampleBody": {},
+
+    "exampleResponse": {
+      "user": {
+        "user_id": 11,
+        "post_id": 2,
+        "like_id": 12
+      }
+    }
+  },
+  "POST /api/users/:user_id/commentlikes/:comment_id": {
+    "description": "posts a commentlike according to user id",
+    "queries": [],
+    "exampleBody": {},
+
+    "exampleResponse": {
+      "user": {
+        "user_id": 11,
+        "comment_id": 2,
+        "comment_like_id": 12
+      }
+    }
+  },
   "POST /api/posts": {
     "description": "posts a post object containing user_id, img_url, body and site_id keys to the posts table",
     "queries": [],
@@ -236,6 +296,12 @@
   },
   "DELETE /api/users/:user_id": {
     "description": "deletes a user by user_id"
+  },
+  "DELETE /api/users/:user_id/postlikes/:post_id": {
+    "description": "deletes a postlike according to user id and post id"
+  },
+  "DELETE /api/users/:user_id/commentlikes/:comment_id": {
+    "description": "deletes a commentlike according to user id and comment id"
   },
   "DELETE /api/sites/:site_id": {
     "description": "deletes a site by site_id"
