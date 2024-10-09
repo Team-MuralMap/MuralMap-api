@@ -175,6 +175,32 @@
       }
     }
   },
+  "POST /api/users/:user_id/postlikes/:post_id": {
+    "description": "posts a postlike according to user id",
+    "queries": [],
+    "exampleBody": {},
+
+    "exampleResponse": {
+      "user": {
+        "user_id": 11,
+        "post_id": 2,
+        "like_id": 12
+      }
+    }
+  },
+  "POST /api/users/:user_id/commentlikes/:comment_id": {
+    "description": "posts a commentlike according to user id",
+    "queries": [],
+    "exampleBody": {},
+
+    "exampleResponse": {
+      "user": {
+        "user_id": 11,
+        "comment_id": 2,
+        "comment_like_id": 12
+      }
+    }
+  },
   "POST /api/posts": {
     "description": "posts a post object containing user_id, img_url, body and site_id keys to the posts table",
     "queries": [],
@@ -270,6 +296,12 @@
   },
   "DELETE /api/users/:user_id": {
     "description": "deletes a user by user_id"
+  },
+  "DELETE /api/users/:user_id/postlikes/:post_id": {
+    "description": "deletes a postlike according to user id and post id"
+  },
+  "DELETE /api/users/:user_id/commentlikes/:comment_id": {
+    "description": "deletes a commentlike according to user id and comment id"
   },
   "DELETE /api/sites/:site_id": {
     "description": "deletes a site by site_id"

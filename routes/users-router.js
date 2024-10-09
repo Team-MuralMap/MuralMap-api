@@ -7,6 +7,10 @@ const {
   getPostlikeByUserIdAndPostId,
   getCommentlikesByUserId,
   getCommentlikeByUserIdAndCommentId,
+  postPostlikeByUserIdAndPostId,
+  postCommentlikeByUserIdAndCommentId,
+  deletePostlikeByUserIdAndPostId,
+  deleteCommentlikeByUserIdAndCommentId,
 } = require("../controllers/users.controllers");
 
 const usersRouter = require("express").Router();
@@ -38,6 +42,12 @@ usersRouter
   .route("/:user_id/postlikes/:post_id")
   .get((request, response, next) => {
     getPostlikeByUserIdAndPostId(request, response, next);
+  })
+  .post((request, response, next) => {
+    postPostlikeByUserIdAndPostId(request, response, next);
+  })
+  .delete((request, response, next) => {
+    deletePostlikeByUserIdAndPostId(request, response, next);
   });
 
 usersRouter.route("/:user_id/commentlikes").get((request, response, next) => {
@@ -48,4 +58,10 @@ usersRouter
   .route("/:user_id/commentlikes/:comment_id")
   .get((request, response, next) => {
     getCommentlikeByUserIdAndCommentId(request, response, next);
+  })
+  .post((request, response, next) => {
+    postCommentlikeByUserIdAndCommentId(request, response, next);
+  })
+  .delete((request, response, next) => {
+    deleteCommentlikeByUserIdAndCommentId(request, response, next);
   });
