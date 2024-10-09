@@ -8,6 +8,10 @@ const {
   accessPostlikeByUserAndPost,
   accessCommentlikesByUser,
   accessCommentlikeByUserAndComment,
+  insertPostlikeByUserAndPost,
+  insertCommentlikeByUserAndComment,
+  removePostlikeByUserAndPost,
+  removeCommentlikeByUserAndComment,
 } = require("../models/users.models");
 
 exports.getUsers = (request, response, next) => {
@@ -73,11 +77,22 @@ exports.getCommentlikeByUserIdAndCommentId = (request, response, next) => {
     });
 };
 
-exports.deleteUser = (request, response, next) => {
-  const { user_id } = request.params;
-  removeUser(user_id)
-    .then(() => {
-      response.status(204).send();
+exports.postPostlikeByUserIdAndPostId = (request, response, next) => {
+  const { params } = request;
+  insertPostlikeByUserAndPost(params.user_id, params.post_id)
+    .then((likeData) => {
+      response.status(201).send({ like: likeData });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postCommentlikeByUserIdAndCommentId = (request, response, next) => {
+  const { params } = request;
+  insertCommentlikeByUserAndComment(params.user_id, params.comment_id)
+    .then((likeData) => {
+      response.status(201).send({ like: likeData });
     })
     .catch((err) => {
       next(err);
@@ -90,6 +105,39 @@ exports.postUser = (request, response, next) => {
   insertUser(newUser)
     .then((user) => {
       response.status(201).send({ user });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteUser = (request, response, next) => {
+  const { user_id } = request.params;
+  removeUser(user_id)
+    .then(() => {
+      response.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deletePostlikeByUserIdAndPostId = (request, response, next) => {
+  const { params } = request;
+  removePostlikeByUserAndPost(params.user_id, params.post_id)
+    .then(() => {
+      response.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteCommentlikeByUserIdAndCommentId = (request, response, next) => {
+  const { params } = request;
+  removeCommentlikeByUserAndComment(params.user_id, params.comment_id)
+    .then(() => {
+      response.status(204).send();
     })
     .catch((err) => {
       next(err);
