@@ -524,7 +524,7 @@ describe("GET /api/posts queries: fitlering by any valid column", () => {
       .expect(200)
       .then((response) => {
         const posts = response.body.posts;
-
+        console.log(posts, "posts here");
         expect(Array.isArray(posts)).toBe(true);
 
         for (const post of posts) {
